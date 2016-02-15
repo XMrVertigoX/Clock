@@ -28,28 +28,6 @@ static volatile time_t timestamp = 0;
 I2cMaster *i2cMaster = new I2cMaster;
 Uart *uart = new Uart;
 
-void  operator delete(void* obj) {
-    free(obj);
-}
-
-void* operator new(size_t objsize) {
-    return malloc(objsize);
-}
-
-static int put(char byte, FILE *stream) {
-    uart->sendByte(byte);
-    return 0;
-}
-
-static int get(FILE *stream) {
-    return uart->receiveByte();
-}
-
-// static void delay(uint32_t delayInMilliseconds) {
-//     uint32_t currentTicks = milliseconds;
-//     while ((milliseconds - currentTicks) < delayInMilliseconds);
-// }
-
 static inline time_t getNtpTime(time_t unixTimestamp) {
     return (unixTimestamp - UNIX_OFFSET);
 }
@@ -60,13 +38,6 @@ static void updateDisplay(struct tm *tm_rtc, HT16K33_Display *display) {
     display->updateDigit(digit2, tm_rtc->tm_min / 10);
     display->updateDigit(digit3, tm_rtc->tm_min % 10);
 }
-
-// static void setIOStream() {
-//     FILE* stream = fdevopen(put, get);
-//     stdin = stream;
-//     stdout = stream;
-//     stderr = stream;
-// }
 
 // Configure timer 0 as ms counter
 static void configureTimer0Interrupt() {
@@ -83,25 +54,23 @@ static void configureTimer0Interrupt() {
     TIMSK0 |= (1 << OCIE0A);
 }
 
-static void configureUsart0RxInterrupt() {
+static void configureUsartRxInterrupt() {
     UCSR0B |= (1 << RXCIE0);
 }
 
-ISR (TIMER0_COMPA_vect) {
+ISR(TIMER0_COMPA_vect) {
     milliseconds++;
 }
 
-ISR (USART_RX_vect) {
-    disableInterrupts();
+ISR(USART_RX_vect) {
+    // disableInterrupts();
     union {
         uint32_t a;
         uint8_t b[4];
     } buffer;
-    for (uint32_t i = 0; i < sizeof(buffer.b); i++) {
-        buffer.b[i] = uart->receiveByte();
-    }
+    uart->receiveBytes(buffer.b, sizeof(buffer.b));
     timestamp = (time_t) buffer.a;
-    enableInterrupts();
+    // enableInterrupts();
 }
 
 int main() {
@@ -109,7 +78,7 @@ int main() {
     DS1307 rtc(i2cMaster, rtcAddress);
 
     configureTimer0Interrupt();
-    configureUsart0RxInterrupt();
+    configureUsartRxInterrupt();
 
     set_dst(eu_dst);
     set_zone(+1 * ONE_HOUR);
@@ -126,7 +95,6 @@ int main() {
             enableInterrupts();
         }
 
-        // Update display every second
         if (!(milliseconds % 1000)) {
             disableInterrupts();
 

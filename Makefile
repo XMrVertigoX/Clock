@@ -1,7 +1,6 @@
 include config.mk
 
 ISP = avrispmkII
-# ISP = usbtiny
 
 # ------------------------------------------------------------------------------
 
@@ -11,11 +10,14 @@ SYMBOLS += F_SCL=400000
 
 # ----- Sources ----------------------------------------------------------------
 
-INCLUDES += lib/atmega328p/inc
-SOURCES += $(wildcard lib/atmega328p/src/*.cpp)
+INCLUDES += lib/drivers/abstract/
+SOURCES += $(wildcard lib/drivers/abstract/*.cpp)
 
-INCLUDES += lib/modules/inc
-SOURCES += $(wildcard lib/modules/src/*.cpp)
+INCLUDES += lib/drivers/atmega328p
+SOURCES += $(wildcard lib/drivers/atmega328p/*.cpp)
+
+INCLUDES += $(wildcard lib/modules/*)
+SOURCES += $(wildcard lib/modules/*/*.cpp)
 
 INCLUDES += src/include
 SOURCES += $(wildcard src/*.cpp)
@@ -24,10 +26,10 @@ SOURCES += $(wildcard src/*.cpp)
 
 GCCFLAGS += -mmcu=atmega328p
 
-# CPPFLAGS +=
+CPPFLAGS += -include lib/drivers/atmega328p/operators.h
 
-CFLAGS   += -O3 -ffunction-sections -fdata-sections -fno-exceptions -fno-builtin -fno-common -fomit-frame-pointer
-CXXFLAGS += -O3 -ffunction-sections -fdata-sections -fno-exceptions -fno-builtin -fno-common -fomit-frame-pointer
+CFLAGS   += -Os -ffunction-sections -fdata-sections -fno-exceptions -fno-builtin -fno-common -fomit-frame-pointer
+CXXFLAGS += -Os -ffunction-sections -fdata-sections -fno-exceptions -fno-builtin -fno-common -fomit-frame-pointer
 
 LDFLAGS  += -Wl,--gc-sections
 
