@@ -8,6 +8,8 @@ MAPFILE    = $(OUTDIR)/$(NAME).map
 
 CPPFLAGS += $(addprefix -D,$(SYMBOLS))
 CPPFLAGS += $(addprefix -I,$(INCLUDES))
+
+LDFLAGS  += $(addprefix -l,$(LIBS))
 LDFLAGS  += -Wl,-Map=$(MAPFILE)
 
 # ----- Other ------------------------------------------------------------------

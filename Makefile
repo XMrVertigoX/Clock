@@ -10,17 +10,17 @@ SYMBOLS += F_SCL=400000
 
 # ----- Sources ----------------------------------------------------------------
 
-INCLUDES += lib/drivers/abstract/
+INCLUDES += lib
 SOURCES += $(wildcard lib/drivers/abstract/*.cpp)
+SOURCES += $(wildcard lib/modules/*/*.cpp)
 
 INCLUDES += lib/drivers/atmega328p
 SOURCES += $(wildcard lib/drivers/atmega328p/*.cpp)
 
-INCLUDES += $(wildcard lib/modules/*)
-SOURCES += $(wildcard lib/modules/*/*.cpp)
-
 INCLUDES += src/include
 SOURCES += $(wildcard src/*.cpp)
+
+LIBS += c
 
 # ----- Flags ------------------------------------------------------------------
 
