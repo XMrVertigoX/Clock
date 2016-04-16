@@ -5,17 +5,17 @@
 #include <stdio.h>
 
 class Uart {
+   private:
+    FILE* stream;
+
    public:
     Uart();
     virtual ~Uart();
 
-    int8_t receiveBytes(uint8_t bytes[], uint32_t numBytes);
-    int8_t sendBytes(uint8_t bytes[], uint32_t numBytes);
+    uint8_t receiveBytes(uint8_t bytes[], uint32_t numBytes);
+    uint8_t sendBytes(uint8_t bytes[], uint32_t numBytes);
 
     FILE* getStream();
-
-   private:
-    FILE* stream;
 };
 
 #endif

@@ -9,6 +9,7 @@ class DS1307 {
    public:
     DS1307(uint8_t address);
     ~DS1307();
+
     time_t read();
     void write(time_t ntpTime);
 

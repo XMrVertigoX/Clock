@@ -11,6 +11,7 @@ class HT16K33_Display {
    public:
     HT16K33_Display(uint8_t address);
     ~HT16K33_Display();
+
     void setBrightness(uint8_t brightness);
     void toggleColon();
     void updateDigit(digit_t digit, uint8_t number);

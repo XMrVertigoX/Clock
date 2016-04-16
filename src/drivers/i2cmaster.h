@@ -5,16 +5,17 @@
 
 class I2cMaster {
    private:
-    static I2cMaster* instance;
+    static I2cMaster* theInstance;
+
     I2cMaster();
 
    public:
     virtual ~I2cMaster();
 
-    int8_t startTransmission();
-    int8_t stopTransmission();
-    int8_t readBytes(uint8_t address, uint8_t bytes[], uint32_t numBytes);
-    int8_t writeBytes(uint8_t address, uint8_t bytes[], uint32_t numBytes);
+    uint8_t startTransmission();
+    uint8_t stopTransmission();
+    uint8_t readBytes(uint8_t address, uint8_t bytes[], uint32_t numBytes);
+    uint8_t writeBytes(uint8_t address, uint8_t bytes[], uint32_t numBytes);
 
     static I2cMaster* getInstance();
 };

@@ -10,7 +10,15 @@
 #define F_SCL 400000
 #endif
 
-I2cMaster* I2cMaster::instance = NULL;
+I2cMaster* I2cMaster::theInstance = NULL;
+
+I2cMaster* I2cMaster::getInstance() {
+    if (!theInstance) {
+        theInstance = new I2cMaster;
+    }
+
+    return theInstance;
+}
 
 static inline uint8_t calculateBitRate() {
     return (((F_CPU / F_SCL) - 16) / 2);
@@ -80,27 +88,27 @@ I2cMaster::I2cMaster() {
 I2cMaster::~I2cMaster() {
 }
 
-int8_t I2cMaster::startTransmission() {
+uint8_t I2cMaster::startTransmission() {
     uint8_t status = sendStartCondition();
 
     if (status == TW_START || status == TW_REP_START) {
         return 0;
     } else {
-        return -1;
+        return 1;
     }
 }
 
-int8_t I2cMaster::stopTransmission() {
+uint8_t I2cMaster::stopTransmission() {
     sendStopCondition();
     return 0;
 }
 
-int8_t I2cMaster::readBytes(
+uint8_t I2cMaster::readBytes(
         uint8_t address, uint8_t bytes[], uint32_t numBytes) {
     uint8_t status = sendAddress(address, TW_READ);
 
     if (status != TW_MR_SLA_ACK) {
-        return -1;
+        return 1;
     }
 
     for (uint32_t i = 0; i < numBytes; i++) {
@@ -113,32 +121,26 @@ int8_t I2cMaster::readBytes(
         if (status == TW_MR_DATA_ACK || status == TW_MR_DATA_NACK) {
             bytes[i] = readDataRegister();
         } else {
-            return -1;
+            return 1;
         }
     }
 
     return 0;
 }
 
-int8_t I2cMaster::writeBytes(
+uint8_t I2cMaster::writeBytes(
         uint8_t address, uint8_t bytes[], uint32_t numBytes) {
     uint8_t status = sendAddress(address, TW_WRITE);
 
     if (status != TW_MT_SLA_ACK) {
-        return -1;
+        return 1;
     }
 
     for (uint32_t i = 0; i < numBytes; i++) {
         status = sendByte(bytes[i]);
         if (status != TW_MT_DATA_ACK) {
-            return -1;
+            return 1;
         }
     }
     return 0;
-}
-
-I2cMaster* I2cMaster::getInstance() {
-    if (!instance)
-        instance = new I2cMaster;
-    return instance;
 }

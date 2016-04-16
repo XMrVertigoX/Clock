@@ -59,12 +59,12 @@ Uart::Uart() {
 Uart::~Uart() {
 }
 
-int8_t Uart::receiveBytes(uint8_t bytes[], uint32_t numBytes) {
+uint8_t Uart::receiveBytes(uint8_t bytes[], uint32_t numBytes) {
     fread(bytes, sizeof(bytes[0]), numBytes, stream);
     return 0;
 }
 
-int8_t Uart::sendBytes(uint8_t bytes[], uint32_t numBytes) {
+uint8_t Uart::sendBytes(uint8_t bytes[], uint32_t numBytes) {
     fwrite(bytes, sizeof(bytes[0]), numBytes, stream);
     return 0;
 }

@@ -24,6 +24,7 @@ MAPFILE    = $(OUTDIR)/$(NAME).map
 
 # ----- Source files -----------------------------------------------------------
 
+INCLUDES += src
 INCLUDES += src/drivers
 INCLUDES += src/modules
 
@@ -52,7 +53,7 @@ LDFLAGS  += $(addprefix -l,$(LIBS))
 LDFLAGS  += -Wl,-Map=$(MAPFILE)
 LDFLAGS  += -Wl,--gc-sections
 
-# ----- Other ------------------------------------------------------------------
+# ----- Objects ----------------------------------------------------------------
 
 OBJECTS = $(addprefix $(OBJDIR)/,$(addsuffix .o,$(basename $(SOURCES))))
 
