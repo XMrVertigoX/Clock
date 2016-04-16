@@ -10,7 +10,7 @@
 #define F_SCL 400000
 #endif
 
-Twi* Twi::theInstance = NULL;
+Twi* Twi::_instance = NULL;
 
 static inline uint8_t calculateBitRate() {
     return (((F_CPU / F_SCL) - 16) / 2);
@@ -78,15 +78,15 @@ Twi::Twi() {
 }
 
 Twi::~Twi() {
-    delete theInstance;
+    delete _instance;
 }
 
-Twi& Twi::getInstance() {
-    if (!theInstance) {
-        theInstance = new Twi;
+Twi& Twi::instance() {
+    if (!_instance) {
+        _instance = new Twi;
     }
 
-    return *theInstance;
+    return *_instance;
 }
 
 uint8_t Twi::startTransmission() {

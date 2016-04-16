@@ -99,8 +99,6 @@ int main() {
             struct tm* tm_rtc = localtime(&time_gm);
             updateDisplay(tm_rtc, &display);
 
-            display.toggleColon();
-
             enableInterrupts();
         }
     }

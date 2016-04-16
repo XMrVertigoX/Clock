@@ -6,7 +6,7 @@
 
 #include "ds1307.h"
 
-#define TWI Twi::getInstance()
+#define TWI Twi::instance()
 
 static inline uint8_t decode(uint8_t num) {
     return (num - 6 * (num >> 4));
@@ -26,6 +26,7 @@ DS1307::~DS1307() {
 time_t DS1307::read() {
     uint8_t timeRegistersStart = 0x00;
     uint8_t timeRegisters[7];
+    struct tm tm_rtc;
 
     TWI.startTransmission();
     TWI.writeBytes(address, &timeRegistersStart, 1);
@@ -33,7 +34,6 @@ time_t DS1307::read() {
     TWI.readBytes(address, timeRegisters, sizeof(timeRegisters));
     TWI.stopTransmission();
 
-    struct tm tm_rtc;
     tm_rtc.tm_sec = decode(timeRegisters[0]);
     tm_rtc.tm_min = decode(timeRegisters[1]);
     tm_rtc.tm_hour = decode(timeRegisters[2]);

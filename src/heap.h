@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-void operator delete(void* obj);
-void* operator new(size_t objsize);
+void operator delete(void* object);
+void* operator new(size_t object);
 
 #endif
