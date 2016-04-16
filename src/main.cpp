@@ -9,7 +9,6 @@
 
 #include <util/eu_dst.h>
 
-#include "i2cmaster.h"
 #include "uart.h"
 
 #include "ds1307.h"
@@ -24,7 +23,6 @@
 static volatile uint32_t milliseconds = 0;
 static volatile time_t timestamp = 0;
 
-I2cMaster* i2cMaster = new I2cMaster;
 Uart* uart = new Uart;
 
 static inline time_t getNtpTime(time_t unixTimestamp) {
@@ -73,8 +71,8 @@ ISR(USART_RX_vect) {
 }
 
 int main() {
-    HT16K33_Display display(i2cMaster, displayAddress);
-    DS1307 rtc(i2cMaster, rtcAddress);
+    HT16K33_Display display(displayAddress);
+    DS1307 rtc(rtcAddress);
 
     configureTimer0Interrupt();
     enableUsartRxInterrupt();

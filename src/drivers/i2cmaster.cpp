@@ -10,6 +10,8 @@
 #define F_SCL 400000
 #endif
 
+I2cMaster* I2cMaster::instance = NULL;
+
 static inline uint8_t calculateBitRate() {
     return (((F_CPU / F_SCL) - 16) / 2);
 }
@@ -133,4 +135,10 @@ int8_t I2cMaster::writeBytes(
         }
     }
     return 0;
+}
+
+I2cMaster* I2cMaster::getInstance() {
+    if (!instance)
+        instance = new I2cMaster;
+    return instance;
 }

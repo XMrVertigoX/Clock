@@ -14,9 +14,8 @@ static inline uint8_t encode(uint8_t num) {
     return (num + 6 * (num / 10));
 }
 
-DS1307::DS1307(I2cMaster* i2cMaster, uint8_t address) {
+DS1307::DS1307(uint8_t address) {
     this->address = address;
-    this->i2cMaster = i2cMaster;
 }
 
 DS1307::~DS1307() {
@@ -26,11 +25,12 @@ time_t DS1307::read() {
     uint8_t timeRegistersStart = 0x00;
     uint8_t timeRegisters[7];
 
-    i2cMaster->startTransmission();
-    i2cMaster->writeBytes(address, &timeRegistersStart, 1);
-    i2cMaster->startTransmission();
-    i2cMaster->readBytes(address, timeRegisters, sizeof(timeRegisters));
-    i2cMaster->stopTransmission();
+    I2cMaster::getInstance()->startTransmission();
+    I2cMaster::getInstance()->writeBytes(address, &timeRegistersStart, 1);
+    I2cMaster::getInstance()->startTransmission();
+    I2cMaster::getInstance()->readBytes(
+            address, timeRegisters, sizeof(timeRegisters));
+    I2cMaster::getInstance()->stopTransmission();
 
     struct tm tm_rtc;
     tm_rtc.tm_sec = decode(timeRegisters[0]);
@@ -55,7 +55,8 @@ void DS1307::write(time_t ntpTime) {
             encode(tm_ntp->tm_mon + 1),  // rtc_mon is 1-12
             encode(tm_ntp->tm_year)};
 
-    i2cMaster->startTransmission();
-    i2cMaster->writeBytes(address, timeRegisters, sizeof(timeRegisters));
-    i2cMaster->stopTransmission();
+    I2cMaster::getInstance()->startTransmission();
+    I2cMaster::getInstance()->writeBytes(
+            address, timeRegisters, sizeof(timeRegisters));
+    I2cMaster::getInstance()->stopTransmission();
 }
