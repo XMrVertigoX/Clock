@@ -1,10 +1,5 @@
 **/_obj
 **/_out
 
-**/.cproject
-**/.project
-**/.settings
-
 tags
 docker.sh
-updatetime.sh
