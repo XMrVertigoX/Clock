@@ -4,3 +4,7 @@
 **/.cproject
 **/.project
 **/.settings
+
+tags
+docker.sh
+updatetime.sh

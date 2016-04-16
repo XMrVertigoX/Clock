@@ -9,11 +9,11 @@
 
 #include <util/eu_dst.h>
 
-#include <i2cmaster.h>
-#include <uart.h>
+#include "i2cmaster.h"
+#include "uart.h"
 
-#include <modules/ds1307/ds1307.h>
-#include <modules/ht16k33/ht16k33_display.h>
+#include "ds1307.h"
+#include "ht16k33_display.h"
 
 #define disableInterrupts cli
 #define enableInterrupts sei

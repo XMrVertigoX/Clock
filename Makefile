@@ -10,23 +10,18 @@ SYMBOLS += F_SCL=400000
 
 # ----- Sources ----------------------------------------------------------------
 
-INCLUDES += lib
-SOURCES += $(wildcard lib/drivers/abstract/*.cpp)
-SOURCES += $(wildcard lib/modules/*/*.cpp)
+INCLUDES += src/drivers
+INCLUDES += src/modules
 
-INCLUDES += lib/drivers/atmega328p
-SOURCES += $(wildcard lib/drivers/atmega328p/*.cpp)
-
-INCLUDES += src/include
 SOURCES += $(wildcard src/*.cpp)
-
-LIBS += c
+SOURCES += $(wildcard src/drivers/*.cpp)
+SOURCES += $(wildcard src/modules/*.cpp)
 
 # ----- Flags ------------------------------------------------------------------
 
 GCCFLAGS += -mmcu=atmega328p
 
-CPPFLAGS += -include lib/drivers/atmega328p/operators.h
+CPPFLAGS += -include src/heap.h
 
 CFLAGS   += -Os -ffunction-sections -fdata-sections -fno-exceptions -fno-builtin -fno-common -fomit-frame-pointer
 CXXFLAGS += -Os -ffunction-sections -fdata-sections -fno-exceptions -fno-builtin -fno-common -fomit-frame-pointer
