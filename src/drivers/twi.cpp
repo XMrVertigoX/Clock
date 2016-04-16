@@ -4,17 +4,17 @@
 #include <avr/io.h>
 #include <util/twi.h>
 
-#include "i2cmaster.h"
+#include "twi.h"
 
 #ifndef F_SCL
 #define F_SCL 400000
 #endif
 
-I2cMaster* I2cMaster::theInstance = NULL;
+Twi* Twi::theInstance = NULL;
 
-I2cMaster* I2cMaster::getInstance() {
+Twi* Twi::getInstance() {
     if (!theInstance) {
-        theInstance = new I2cMaster;
+        theInstance = new Twi;
     }
 
     return theInstance;
@@ -81,14 +81,14 @@ static uint8_t sendNACK() {
     return TW_STATUS;
 }
 
-I2cMaster::I2cMaster() {
+Twi::Twi() {
     setBitRate();
 }
 
-I2cMaster::~I2cMaster() {
+Twi::~Twi() {
 }
 
-uint8_t I2cMaster::startTransmission() {
+uint8_t Twi::startTransmission() {
     uint8_t status = sendStartCondition();
 
     if (status == TW_START || status == TW_REP_START) {
@@ -98,13 +98,12 @@ uint8_t I2cMaster::startTransmission() {
     }
 }
 
-uint8_t I2cMaster::stopTransmission() {
+uint8_t Twi::stopTransmission() {
     sendStopCondition();
     return 0;
 }
 
-uint8_t I2cMaster::readBytes(
-        uint8_t address, uint8_t bytes[], uint32_t numBytes) {
+uint8_t Twi::readBytes(uint8_t address, uint8_t bytes[], uint32_t numBytes) {
     uint8_t status = sendAddress(address, TW_READ);
 
     if (status != TW_MR_SLA_ACK) {
@@ -128,8 +127,7 @@ uint8_t I2cMaster::readBytes(
     return 0;
 }
 
-uint8_t I2cMaster::writeBytes(
-        uint8_t address, uint8_t bytes[], uint32_t numBytes) {
+uint8_t Twi::writeBytes(uint8_t address, uint8_t bytes[], uint32_t numBytes) {
     uint8_t status = sendAddress(address, TW_WRITE);
 
     if (status != TW_MT_SLA_ACK) {

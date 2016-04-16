@@ -3,21 +3,21 @@
 
 #include <stdint.h>
 
-class I2cMaster {
+class Twi {
    private:
-    static I2cMaster* theInstance;
+    static Twi* theInstance;
 
-    I2cMaster();
+    Twi();
 
    public:
-    virtual ~I2cMaster();
+    virtual ~Twi();
 
     uint8_t startTransmission();
     uint8_t stopTransmission();
     uint8_t readBytes(uint8_t address, uint8_t bytes[], uint32_t numBytes);
     uint8_t writeBytes(uint8_t address, uint8_t bytes[], uint32_t numBytes);
 
-    static I2cMaster* getInstance();
+    static Twi* getInstance();
 };
 
 #endif

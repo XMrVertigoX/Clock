@@ -3,7 +3,7 @@
 
 #include <time.h>
 
-#include "i2cmaster.h"
+#include "twi.h"
 
 class DS1307 {
    public:

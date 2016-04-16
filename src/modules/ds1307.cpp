@@ -2,11 +2,11 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "i2cmaster.h"
+#include "twi.h"
 
 #include "ds1307.h"
 
-#define I2C I2cMaster::getInstance()
+#define TWI Twi::getInstance()
 
 static inline uint8_t decode(uint8_t num) {
     return (num - 6 * (num >> 4));
@@ -27,11 +27,11 @@ time_t DS1307::read() {
     uint8_t timeRegistersStart = 0x00;
     uint8_t timeRegisters[7];
 
-    I2C->startTransmission();
-    I2C->writeBytes(address, &timeRegistersStart, 1);
-    I2C->startTransmission();
-    I2C->readBytes(address, timeRegisters, sizeof(timeRegisters));
-    I2C->stopTransmission();
+    TWI->startTransmission();
+    TWI->writeBytes(address, &timeRegistersStart, 1);
+    TWI->startTransmission();
+    TWI->readBytes(address, timeRegisters, sizeof(timeRegisters));
+    TWI->stopTransmission();
 
     struct tm tm_rtc;
     tm_rtc.tm_sec = decode(timeRegisters[0]);
@@ -56,7 +56,7 @@ void DS1307::write(time_t ntpTime) {
             encode(tm_ntp->tm_mon + 1),  // rtc_mon is 1-12
             encode(tm_ntp->tm_year)};
 
-    I2C->startTransmission();
-    I2C->writeBytes(address, timeRegisters, sizeof(timeRegisters));
-    I2C->stopTransmission();
+    TWI->startTransmission();
+    TWI->writeBytes(address, timeRegisters, sizeof(timeRegisters));
+    TWI->stopTransmission();
 }
