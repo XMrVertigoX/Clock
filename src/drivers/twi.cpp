@@ -12,14 +12,6 @@
 
 Twi* Twi::theInstance = NULL;
 
-Twi* Twi::getInstance() {
-    if (!theInstance) {
-        theInstance = new Twi;
-    }
-
-    return theInstance;
-}
-
 static inline uint8_t calculateBitRate() {
     return (((F_CPU / F_SCL) - 16) / 2);
 }
@@ -86,6 +78,15 @@ Twi::Twi() {
 }
 
 Twi::~Twi() {
+    delete theInstance;
+}
+
+Twi* Twi::getInstance() {
+    if (!theInstance) {
+        theInstance = new Twi;
+    }
+
+    return theInstance;
 }
 
 uint8_t Twi::startTransmission() {
@@ -98,9 +99,8 @@ uint8_t Twi::startTransmission() {
     }
 }
 
-uint8_t Twi::stopTransmission() {
+void Twi::stopTransmission() {
     sendStopCondition();
-    return 0;
 }
 
 uint8_t Twi::readBytes(uint8_t address, uint8_t bytes[], uint32_t numBytes) {

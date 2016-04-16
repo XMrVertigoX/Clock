@@ -25,11 +25,11 @@ static volatile time_t timestamp = 0;
 
 Uart* uart = new Uart;
 
-static inline time_t getNtpTime(time_t unixTimestamp) {
+time_t getNtpTime(time_t unixTimestamp) {
     return (unixTimestamp - UNIX_OFFSET);
 }
 
-static void updateDisplay(struct tm* tm_rtc, HT16K33_Display* display) {
+void updateDisplay(struct tm* tm_rtc, HT16K33_Display* display) {
     display->updateDigit(digit0, tm_rtc->tm_hour / 10);
     display->updateDigit(digit1, tm_rtc->tm_hour % 10);
     display->updateDigit(digit2, tm_rtc->tm_min / 10);
@@ -37,7 +37,7 @@ static void updateDisplay(struct tm* tm_rtc, HT16K33_Display* display) {
 }
 
 // Configure timer 0 as ms counter
-static void configureTimer0Interrupt() {
+void configureTimer0Interrupt() {
     // Set the Timer Mode to CTC
     TCCR0A |= (1 << WGM01);
 
@@ -51,7 +51,7 @@ static void configureTimer0Interrupt() {
     TIMSK0 |= (1 << OCIE0A);
 }
 
-static void enableUsartRxInterrupt() {
+void enableUsartRxInterrupt() {
     UCSR0B |= (1 << RXCIE0);
 }
 
