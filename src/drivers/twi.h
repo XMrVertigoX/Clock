@@ -17,7 +17,7 @@ class Twi {
     uint8_t readBytes(uint8_t address, uint8_t bytes[], uint32_t numBytes);
     uint8_t writeBytes(uint8_t address, uint8_t bytes[], uint32_t numBytes);
 
-    static Twi* getInstance();
+    static Twi& getInstance();
 };
 
 #endif

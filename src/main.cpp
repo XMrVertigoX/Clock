@@ -14,8 +14,8 @@
 #include "ds1307.h"
 #include "ht16k33_display.h"
 
-#define disableInterrupts cli
-#define enableInterrupts sei
+#define disableInterrupts() cli()
+#define enableInterrupts() sei()
 
 #define displayAddress 0x70
 #define rtcAddress 0x68

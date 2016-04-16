@@ -81,12 +81,12 @@ Twi::~Twi() {
     delete theInstance;
 }
 
-Twi* Twi::getInstance() {
+Twi& Twi::getInstance() {
     if (!theInstance) {
         theInstance = new Twi;
     }
 
-    return theInstance;
+    return *theInstance;
 }
 
 uint8_t Twi::startTransmission() {
