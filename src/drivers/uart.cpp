@@ -8,6 +8,8 @@
 #include "heap.h"
 #include "uart.h"
 
+#define waitUntil(x) while (!x)
+
 Uart* Uart::_instance = NULL;
 
 static inline bool incomingTransmissionComplete() {
@@ -37,24 +39,15 @@ static void enableRxAndTx() {
 }
 
 static int receiveByte(FILE* stream) {
-    while (!incomingTransmissionComplete()) {
-    }
-
-    while (!transmissionBufferReady()) {
-    }
-
+    waitUntil(incomingTransmissionComplete());
+    waitUntil(transmissionBufferReady());
     return UDR0;
 }
 
 static int sendByte(char byte, FILE* stream) {
-    while (!transmissionBufferReady()) {
-    }
-
+    waitUntil(transmissionBufferReady());
     UDR0 = byte;
-
-    while (!outgoingTransmissionComplete()) {
-    }
-
+    waitUntil(outgoingTransmissionComplete());
     return 0;
 }
 
@@ -63,7 +56,7 @@ Uart::Uart() {
     setFrameFormat();
     enableRxAndTx();
 
-    stream = fdevopen(sendByte, receiveByte);
+    _stream = fdevopen(sendByte, receiveByte);
 }
 
 Uart::~Uart() {
@@ -74,10 +67,9 @@ Uart* Uart::getInstance() {
     if (!_instance) {
         _instance = new Uart;
     }
-
     return _instance;
 }
 
 FILE* Uart::getStream() {
-    return stream;
+    return _stream;
 }

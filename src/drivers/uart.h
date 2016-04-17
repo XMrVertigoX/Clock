@@ -7,7 +7,7 @@
 class Uart {
    private:
     static Uart* _instance;
-    FILE* stream = NULL;
+    FILE* _stream = NULL;
     Uart();
 
    public:

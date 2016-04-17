@@ -18,7 +18,6 @@ NAME = firmware
 OBJDIR = _obj
 OUTDIR = _out
 
-BINARY     = $(OUTDIR)/$(NAME).bin
 EXECUTABLE = $(OUTDIR)/$(NAME).elf
 MAPFILE    = $(OUTDIR)/$(NAME).map
 
@@ -68,28 +67,17 @@ OBJECTS = $(addprefix $(OBJDIR)/,$(addsuffix .o,$(basename $(SOURCES))))
 
 .SILENT:
 
-all: $(BINARY)
+all: $(EXECUTABLE)
 
 clean:
 	$(RMDIR) $(OUTDIR)
 	$(RMDIR) $(OBJDIR)
 
-download: $(BINARY)
+download: $(EXECUTABLE)
 	avrdude -p atmega328p -c avrispmkII -U flash:w:$<
 
 size: $(EXECUTABLE)
 	$(SIZE) $^
-
-$(EXECUTABLE): $(OBJECTS)
-	$(MKDIR) $(dir $@)
-	$(GCC) $(GCCFLAGS) $(LDFLAGS) $^ -o $@
-	echo $@
-
-$(BINARY): $(EXECUTABLE)
-	$(OBJCOPY) -O binary $< $@
-	echo $@
-
-# ----- Pattern rules ----------------------------------------------------------
 
 $(OBJDIR)/%.o: %.c
 	$(MKDIR) $(dir $@)
@@ -99,4 +87,9 @@ $(OBJDIR)/%.o: %.c
 $(OBJDIR)/%.o: %.cpp
 	$(MKDIR) $(dir $@)
 	$(GCC) $(GCCFLAGS) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
+	echo $@
+
+$(EXECUTABLE): $(OBJECTS)
+	$(MKDIR) $(dir $@)
+	$(GCC) $(GCCFLAGS) $(LDFLAGS) $^ -o $@
 	echo $@
