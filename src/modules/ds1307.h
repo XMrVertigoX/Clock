@@ -6,15 +6,15 @@
 #include "twi.h"
 
 class DS1307 {
+   private:
+    uint8_t address;
+
    public:
     DS1307(uint8_t address);
     ~DS1307();
 
     time_t read();
     void write(time_t ntpTime);
-
-   private:
-    uint8_t address;
 };
 
 #endif
