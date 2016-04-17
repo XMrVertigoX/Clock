@@ -6,15 +6,13 @@
 
 class Uart {
    private:
-    FILE* stream;
+    static Uart* _instance;
+    FILE* stream = NULL;
+    Uart();
 
    public:
-    Uart();
     virtual ~Uart();
-
-    uint8_t receiveBytes(uint8_t bytes[], uint32_t numBytes);
-    uint8_t sendBytes(uint8_t bytes[], uint32_t numBytes);
-
+    static Uart* getInstance();
     FILE* getStream();
 };
 

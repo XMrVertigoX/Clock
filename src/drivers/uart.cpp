@@ -5,7 +5,10 @@
 #include <avr/io.h>
 #include <util/setbaud.h>
 
+#include "heap.h"
 #include "uart.h"
+
+Uart* Uart::_instance = NULL;
 
 static inline bool incomingTransmissionComplete() {
     return (UCSR0A & (1 << RXC0));
@@ -34,17 +37,24 @@ static void enableRxAndTx() {
 }
 
 static int receiveByte(FILE* stream) {
-    // while(!incomingTransmissionComplete());
-    while (!transmissionBufferReady())
-        ;
+    while (!incomingTransmissionComplete()) {
+    }
+
+    while (!transmissionBufferReady()) {
+    }
+
     return UDR0;
 }
 
 static int sendByte(char byte, FILE* stream) {
-    // while(!outgoingTransmissionComplete());
-    while (!transmissionBufferReady())
-        ;
+    while (!transmissionBufferReady()) {
+    }
+
     UDR0 = byte;
+
+    while (!outgoingTransmissionComplete()) {
+    }
+
     return 0;
 }
 
@@ -57,16 +67,15 @@ Uart::Uart() {
 }
 
 Uart::~Uart() {
+    delete _instance;
 }
 
-uint8_t Uart::receiveBytes(uint8_t bytes[], uint32_t numBytes) {
-    fread(bytes, sizeof(bytes[0]), numBytes, stream);
-    return 0;
-}
+Uart* Uart::getInstance() {
+    if (!_instance) {
+        _instance = new Uart;
+    }
 
-uint8_t Uart::sendBytes(uint8_t bytes[], uint32_t numBytes) {
-    fwrite(bytes, sizeof(bytes[0]), numBytes, stream);
-    return 0;
+    return _instance;
 }
 
 FILE* Uart::getStream() {

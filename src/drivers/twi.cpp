@@ -4,6 +4,7 @@
 #include <avr/io.h>
 #include <util/twi.h>
 
+#include "heap.h"
 #include "twi.h"
 
 #ifndef F_SCL
@@ -81,12 +82,12 @@ Twi::~Twi() {
     delete _instance;
 }
 
-Twi& Twi::instance() {
+Twi* Twi::getInstance() {
     if (!_instance) {
         _instance = new Twi;
     }
 
-    return *_instance;
+    return _instance;
 }
 
 uint8_t Twi::startTransmission() {

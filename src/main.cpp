@@ -6,100 +6,78 @@
 
 #include <avr/interrupt.h>
 #include <avr/io.h>
-
 #include <util/eu_dst.h>
 
-#include "uart.h"
+#include <FreeRTOS.h>
+#include <task.h>
 
 #include "ds1307.h"
 #include "ht16k33_display.h"
+#include "uart.h"
 
 #define disableInterrupts() cli()
 #define enableInterrupts() sei()
-
+#define UART Uart::getInstance()
 #define displayAddress 0x70
 #define rtcAddress 0x68
 
-static volatile uint32_t milliseconds = 0;
-static volatile time_t timestamp = 0;
+HT16K33_Display* display = new HT16K33_Display(displayAddress);
+DS1307* rtc = new DS1307(rtcAddress);
 
-Uart* uart = new Uart;
-
-time_t getNtpTime(time_t unixTimestamp) {
-    return (unixTimestamp - UNIX_OFFSET);
-}
-
-void updateDisplay(struct tm* tm_rtc, HT16K33_Display* display) {
-    display->updateDigit(digit0, tm_rtc->tm_hour / 10);
-    display->updateDigit(digit1, tm_rtc->tm_hour % 10);
-    display->updateDigit(digit2, tm_rtc->tm_min / 10);
-    display->updateDigit(digit3, tm_rtc->tm_min % 10);
-}
-
-// Configure timer 0 as ms counter
-void configureTimer0Interrupt() {
-    // Set the Timer Mode to CTC
-    TCCR0A |= (1 << WGM01);
-
-    // set prescaler to 64
-    TCCR0B |= (1 << CS01) | (1 << CS00);
-
-    // Set the value to count to 249 (0-249 means 250 ticks)
-    OCR0A = F_CPU / 64 / 1000 - 1;
-
-    // Set the ISR COMPA vect
-    TIMSK0 |= (1 << OCIE0A);
-}
-
-void enableUsartRxInterrupt() {
+static void enableUsartRxInterrupt() {
     UCSR0B |= (1 << RXCIE0);
 }
 
-ISR(TIMER0_COMPA_vect) {
-    milliseconds++;
+ISR(USART_RX_vect) {
+    disableInterrupts();
+
+    printf("USART_RX_vect: ");
+
+    time_t timestamp;
+    // fread(&timestamp, 4, 1, stdin);
+    scanf("%d", &timestamp);
+    // rtc->write(timestamp - UNIX_OFFSET);
+    printf("%d -> %s\r\n", timestamp, ctime(&timestamp));
+
+    enableInterrupts();
 }
 
-ISR(USART_RX_vect) {
-    // disableInterrupts();
-    union {
-        uint32_t a;
-        uint8_t b[4];
-    } buffer;
-    uart->receiveBytes(buffer.b, sizeof(buffer.b));
-    timestamp = (time_t)buffer.a;
-    // enableInterrupts();
+void task_updateDisplay(void* pvParameters) {
+    TickType_t xLastWakeTime = xTaskGetTickCount();
+
+    for (;;) {
+        vTaskDelayUntil(&xLastWakeTime, 1000 / portTICK_RATE_MS);
+
+        time_t time_gm = rtc->read();
+        printf("%s\r\n", ctime(&time_gm));
+
+        struct tm* tm_rtc = localtime(&time_gm);
+
+        display->updateDigit(digit0, tm_rtc->tm_hour / 10);
+        display->updateDigit(digit1, tm_rtc->tm_hour % 10);
+        display->updateDigit(digit2, tm_rtc->tm_min / 10);
+        display->updateDigit(digit3, tm_rtc->tm_min % 10);
+    }
+
+    vTaskDelete(NULL);
 }
 
 int main() {
-    HT16K33_Display display(displayAddress);
-    DS1307 rtc(rtcAddress);
-
-    configureTimer0Interrupt();
-    enableUsartRxInterrupt();
+    stderr = UART->getStream();
+    stdin = UART->getStream();
+    stdout = UART->getStream();
 
     set_dst(eu_dst);
-    set_zone(+1 * ONE_HOUR);
+    set_zone(1 * ONE_HOUR);
+    display->setBrightness(0xF);
 
-    display.setBrightness(0x8);
-
+    enableUsartRxInterrupt();
     enableInterrupts();
 
-    while (1) {
-        if (timestamp) {
-            disableInterrupts();
-            rtc.write(getNtpTime(timestamp));
-            timestamp = 0;
-            enableInterrupts();
-        }
+    xTaskCreate(task_updateDisplay, NULL, configMINIMAL_STACK_SIZE, NULL,
+            tskIDLE_PRIORITY + 1, NULL);
 
-        if (!(milliseconds % 1000)) {
-            disableInterrupts();
+    vTaskStartScheduler();
 
-            time_t time_gm = rtc.read();
-            struct tm* tm_rtc = localtime(&time_gm);
-            updateDisplay(tm_rtc, &display);
-
-            enableInterrupts();
-        }
-    }
+    return 0;
 }

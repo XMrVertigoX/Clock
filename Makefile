@@ -27,10 +27,15 @@ MAPFILE    = $(OUTDIR)/$(NAME).map
 INCLUDES += src
 INCLUDES += src/drivers
 INCLUDES += src/modules
+INCLUDES += src/freertos/include
+INCLUDES += src/freertos/portable/GCC/ATMega328P
 
 SOURCES += $(wildcard src/*.cpp)
 SOURCES += $(wildcard src/drivers/*.cpp)
 SOURCES += $(wildcard src/modules/*.cpp)
+SOURCES += $(wildcard src/freertos/*.c)
+SOURCES += $(wildcard src/freertos/portable/GCC/ATMega328P/port.c)
+SOURCES += $(wildcard src/freertos/portable/MemMang/heap_3.c)
 
 # ----- Symbols ----------------------------------------------------------------
 
@@ -42,14 +47,12 @@ SYMBOLS += F_SCL=400000
 
 GCCFLAGS += -mmcu=atmega328p
 
-CPPFLAGS += -include src/heap.h
 CPPFLAGS += $(addprefix -D,$(SYMBOLS))
 CPPFLAGS += $(addprefix -I,$(INCLUDES))
 
 CFLAGS   += -O3 -ffunction-sections -fdata-sections -fno-exceptions -fno-builtin -fno-common -fomit-frame-pointer
 CXXFLAGS += -O3 -ffunction-sections -fdata-sections -fno-exceptions -fno-builtin -fno-common -fomit-frame-pointer
 
-LDFLAGS  += $(addprefix -l,$(LIBS))
 LDFLAGS  += -Wl,-Map=$(MAPFILE)
 LDFLAGS  += -Wl,--gc-sections
 
