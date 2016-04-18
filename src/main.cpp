@@ -14,7 +14,8 @@
 #include <task.h>
 
 #include "ds1307.h"
-#include "ht16k33_display.h"
+#include "ht16k33_segment.h"
+#include "si1145.h"
 #include "uart.h"
 
 #define disableInterrupts() cli()
@@ -22,9 +23,11 @@
 #define UART Uart::getInstance()
 #define displayAddress 0x70
 #define rtcAddress 0x68
+#define sensorAddress 0x00
 
-HT16K33_Display* display = new HT16K33_Display(displayAddress);
-DS1307* rtc = new DS1307(rtcAddress);
+HT16K33_Segment* display;
+DS1307* rtc;
+SI1145* sensor;
 
 SemaphoreHandle_t xSemaphore;
 QueueHandle_t xQueue;
@@ -34,29 +37,29 @@ static void enableUsartRxInterrupt() {
 }
 
 ISR(USART_RX_vect) {
+    uint8_t byte;
+    fread(&byte, 1, 1, stdin);
+    xQueueSendFromISR(xQueue, &byte, 0);
     xSemaphoreGiveFromISR(xSemaphore, NULL);
-    // uint8_t byte;
-    // fread(&byte, 1, 1, stdin);
-    // xQueueSend(xQueue, &byte, 0);
-    // printf("%ld\r\n", uxQueueSpacesAvailable(xQueue));
-    // xQueueReset(xQueue);
 }
 
 void task_updateDisplay(void* pvParameters) {
     TickType_t xLastWakeTime = xTaskGetTickCount();
 
+    display->setBrightness(0xF);
+
     for (;;) {
         vTaskDelayUntil(&xLastWakeTime, 1000 / portTICK_PERIOD_MS);
 
         time_t time_gm = rtc->read();
-        printf("%s\r\n", ctime(&time_gm));
-
         struct tm* tm_rtc = localtime(&time_gm);
 
         display->updateDigit(digit0, tm_rtc->tm_hour / 10);
         display->updateDigit(digit1, tm_rtc->tm_hour % 10);
         display->updateDigit(digit2, tm_rtc->tm_min / 10);
         display->updateDigit(digit3, tm_rtc->tm_min % 10);
+
+        printf("%s\n", asctime(tm_rtc));
     }
 
     vTaskDelete(NULL);
@@ -65,13 +68,18 @@ void task_updateDisplay(void* pvParameters) {
 void task_updateRtc(void* pvParameters) {
     for (;;) {
         if (pdTRUE == xSemaphoreTake(xSemaphore, 0)) {
-            printf("task_updateRtc\r\n");
+            if (4 == uxQueueMessagesWaiting(xQueue)) {
+                union {
+                    uint8_t a[4];
+                    time_t b;
+                } timestamp;
 
-            time_t timestamp;
-            fread(&timestamp, 1, 4, stdin);
-            timestamp -= UNIX_OFFSET;
-            // rtc->write(timestamp);
-            printf("%ld -> %s\r\n", timestamp, ctime(&timestamp));
+                for (size_t i = 0; i < 4; i++) {
+                    xQueueReceive(xQueue, &timestamp.a[i], 0);
+                }
+
+                rtc->write(timestamp.b - UNIX_OFFSET);
+            }
         }
     }
 
@@ -83,12 +91,15 @@ int main() {
     stdin = UART->getStream();
     stdout = UART->getStream();
 
-    set_dst(eu_dst);
-    set_zone(1 * ONE_HOUR);
-    display->setBrightness(0xF);
-
     xSemaphore = xSemaphoreCreateBinary();
     xQueue = xQueueCreate(4, 1);
+
+    display = new HT16K33_Segment(displayAddress);
+    rtc = new DS1307(rtcAddress);
+    sensor = new SI1145(sensorAddress);
+
+    set_dst(eu_dst);
+    set_zone(1 * ONE_HOUR);
 
     enableUsartRxInterrupt();
     enableInterrupts();
