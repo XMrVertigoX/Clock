@@ -33,8 +33,8 @@ SOURCES += $(wildcard src/*.cpp)
 SOURCES += $(wildcard src/drivers/*.cpp)
 SOURCES += $(wildcard src/modules/*.cpp)
 SOURCES += $(wildcard src/freertos/*.c)
-SOURCES += $(wildcard src/freertos/portable/GCC/ATMega328P/port.c)
-SOURCES += $(wildcard src/freertos/portable/MemMang/heap_3.c)
+SOURCES += src/freertos/portable/GCC/ATMega328P/port.c
+SOURCES += src/freertos/portable/MemMang/heap_3.c
 
 # ----- Symbols ----------------------------------------------------------------
 

@@ -13,17 +13,19 @@
 #include <semphr.h>
 #include <task.h>
 
+#include "uart.h"
+
 #include "ds1307.h"
 #include "ht16k33_segment.h"
 #include "si1145.h"
-#include "uart.h"
 
+#define UART Uart::getInstance()
 #define disableInterrupts() cli()
 #define enableInterrupts() sei()
 #define UART Uart::getInstance()
 #define displayAddress 0x70
 #define rtcAddress 0x68
-#define sensorAddress 0x00
+#define sensorAddress 0x60
 
 HT16K33_Segment* display;
 DS1307* rtc;

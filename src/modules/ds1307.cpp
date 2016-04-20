@@ -17,7 +17,7 @@ static inline uint8_t encode(uint8_t num) {
 }
 
 DS1307::DS1307(uint8_t address) {
-    this->address = address;
+    _address = address;
 }
 
 DS1307::~DS1307() {
@@ -29,9 +29,9 @@ time_t DS1307::read() {
     struct tm tm_rtc;
 
     TWI->startTransmission();
-    TWI->writeBytes(address, &timeRegistersStart, 1);
+    TWI->writeBytes(_address, &timeRegistersStart, 1);
     TWI->startTransmission();
-    TWI->readBytes(address, timeRegisters, sizeof(timeRegisters));
+    TWI->readBytes(_address, timeRegisters, sizeof(timeRegisters));
     TWI->stopTransmission();
 
     tm_rtc.tm_sec = decode(timeRegisters[0]);
@@ -57,6 +57,6 @@ void DS1307::write(time_t ntpTime) {
             encode(tm_ntp->tm_year)};
 
     TWI->startTransmission();
-    TWI->writeBytes(address, timeRegisters, sizeof(timeRegisters));
+    TWI->writeBytes(_address, timeRegisters, sizeof(timeRegisters));
     TWI->stopTransmission();
 }

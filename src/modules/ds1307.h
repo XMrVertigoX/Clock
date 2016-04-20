@@ -7,7 +7,7 @@
 
 class DS1307 {
    private:
-    uint8_t address;
+    uint8_t _address;
 
    public:
     DS1307(uint8_t address);
