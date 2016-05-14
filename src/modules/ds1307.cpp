@@ -2,11 +2,11 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "twi.h"
+#include "twi.hpp"
 
 #include "ds1307.h"
 
-#define TWI Twi::getInstance()
+#define TWI() Twi::getInstance()
 
 static inline uint8_t decode(uint8_t num) {
     return (num - 6 * (num >> 4));
@@ -20,19 +20,18 @@ DS1307::DS1307(uint8_t address) {
     _address = address;
 }
 
-DS1307::~DS1307() {
-}
+DS1307::~DS1307() {}
 
 time_t DS1307::read() {
     uint8_t timeRegistersStart = 0x00;
     uint8_t timeRegisters[7];
     struct tm tm_rtc;
 
-    TWI->startTransmission();
-    TWI->writeBytes(_address, &timeRegistersStart, 1);
-    TWI->startTransmission();
-    TWI->readBytes(_address, timeRegisters, sizeof(timeRegisters));
-    TWI->stopTransmission();
+    TWI()->startTransmission();
+    TWI()->writeBytes(_address, &timeRegistersStart, 1);
+    TWI()->startTransmission();
+    TWI()->readBytes(_address, timeRegisters, sizeof(timeRegisters));
+    TWI()->stopTransmission();
 
     tm_rtc.tm_sec = decode(timeRegisters[0]);
     tm_rtc.tm_min = decode(timeRegisters[1]);
@@ -49,14 +48,14 @@ void DS1307::write(time_t ntpTime) {
     struct tm* tm_ntp = gmtime(&ntpTime);
     uint8_t timeRegistersStart = 0x00;
 
-    uint8_t timeRegisters[] = {timeRegistersStart, encode(tm_ntp->tm_sec),
-            encode(tm_ntp->tm_min), encode(tm_ntp->tm_hour),
-            encode(tm_ntp->tm_wday + 1),  // rtc_wday is 1-7
-            encode(tm_ntp->tm_mday),
-            encode(tm_ntp->tm_mon + 1),  // rtc_mon is 1-12
-            encode(tm_ntp->tm_year)};
+    // rtc_wday is 1-7, rtc_mon is 1-12
+    uint8_t timeRegisters[] = {
+        timeRegistersStart,          encode(tm_ntp->tm_sec),
+        encode(tm_ntp->tm_min),      encode(tm_ntp->tm_hour),
+        encode(tm_ntp->tm_wday + 1), encode(tm_ntp->tm_mday),
+        encode(tm_ntp->tm_mon + 1),  encode(tm_ntp->tm_year)};
 
-    TWI->startTransmission();
-    TWI->writeBytes(_address, timeRegisters, sizeof(timeRegisters));
-    TWI->stopTransmission();
+    TWI()->startTransmission();
+    TWI()->writeBytes(_address, timeRegisters, sizeof(timeRegisters));
+    TWI()->stopTransmission();
 }

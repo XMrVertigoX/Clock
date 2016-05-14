@@ -5,10 +5,8 @@
 #include <avr/io.h>
 #include <util/setbaud.h>
 
-#include "heap.h"
-#include "uart.h"
-
-#define waitUntil(x) while (!x)
+#include "util.h"
+#include "uart.hpp"
 
 Uart* Uart::_instance = NULL;
 

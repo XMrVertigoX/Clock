@@ -3,7 +3,7 @@
 
 #include <time.h>
 
-#include "twi.h"
+#include "twi.hpp"
 
 class DS1307 {
    private:

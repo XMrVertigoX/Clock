@@ -4,8 +4,8 @@
 #include <avr/io.h>
 #include <util/twi.h>
 
-#include "heap.h"
-#include "twi.h"
+#include "util.h"
+#include "twi.hpp"
 
 #ifndef F_SCL
 #define F_SCL 400000
@@ -22,8 +22,8 @@ static inline void setBitRate() {
 }
 
 static inline void waitForInterrupt() {
-    while (!(TWCR & (1 << TWINT)))
-        ;
+    // while (!(TWCR & (1 << TWINT))) continue;
+    waitUntil(TWCR & (1 << TWINT));
 }
 
 static inline void writeControlRegister(uint8_t byte) {

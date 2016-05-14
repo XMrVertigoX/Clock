@@ -61,13 +61,12 @@ OBJECTS = $(addprefix $(OBJDIR)/,$(addsuffix .o,$(basename $(SOURCES))))
 
 # ----- Rules ------------------------------------------------------------------
 
-.PHONY: all clean download size
-
-.PRECIOUS: $(OBJECTS)
-
-.SILENT:
+.PHONY: all clean download
 
 all: $(EXECUTABLE)
+	@echo # New line for better reading
+	$(SIZE) $^
+	@echo
 
 clean:
 	$(RMDIR) $(OUTDIR)
@@ -76,20 +75,17 @@ clean:
 download: $(EXECUTABLE)
 	avrdude -p atmega328p -c avrispmkII -U flash:w:$<
 
-size: $(EXECUTABLE)
-	$(SIZE) $^
-
 $(OBJDIR)/%.o: %.c
 	$(MKDIR) $(dir $@)
 	$(GCC) $(GCCFLAGS) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
-	echo $@
+	@echo $@
 
 $(OBJDIR)/%.o: %.cpp
 	$(MKDIR) $(dir $@)
 	$(GCC) $(GCCFLAGS) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
-	echo $@
+	@echo $@
 
 $(EXECUTABLE): $(OBJECTS)
 	$(MKDIR) $(dir $@)
 	$(GCC) $(GCCFLAGS) $(LDFLAGS) $^ -o $@
-	echo $@
+	@echo $@

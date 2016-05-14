@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "twi.h"
+#include "twi.hpp"
 
 enum digit_t { digit0 = 0, digit1 = 2, digitColon = 4, digit2 = 6, digit3 = 8 };
 

@@ -13,7 +13,7 @@
 #include <semphr.h>
 #include <task.h>
 
-#include "uart.h"
+#include "uart.hpp"
 
 #include "ds1307.h"
 #include "ht16k33_segment.h"
@@ -27,9 +27,9 @@
 #define rtcAddress 0x68
 #define sensorAddress 0x60
 
-HT16K33_Segment* display;
-DS1307* rtc;
-SI1145* sensor;
+HT16K33_Segment *display;
+DS1307 *rtc;
+SI1145 *sensor;
 
 SemaphoreHandle_t xSemaphore;
 QueueHandle_t xQueue;
@@ -45,7 +45,7 @@ ISR(USART_RX_vect) {
     xSemaphoreGiveFromISR(xSemaphore, NULL);
 }
 
-void task_updateDisplay(void* pvParameters) {
+void task_updateDisplay(void *pvParameters) {
     TickType_t xLastWakeTime = xTaskGetTickCount();
 
     display->setBrightness(0xF);
@@ -54,7 +54,7 @@ void task_updateDisplay(void* pvParameters) {
         vTaskDelayUntil(&xLastWakeTime, 1000 / portTICK_PERIOD_MS);
 
         time_t time_gm = rtc->read();
-        struct tm* tm_rtc = localtime(&time_gm);
+        struct tm *tm_rtc = localtime(&time_gm);
 
         display->updateDigit(digit0, tm_rtc->tm_hour / 10);
         display->updateDigit(digit1, tm_rtc->tm_hour % 10);
@@ -67,7 +67,7 @@ void task_updateDisplay(void* pvParameters) {
     vTaskDelete(NULL);
 }
 
-void task_updateRtc(void* pvParameters) {
+void task_updateRtc(void *pvParameters) {
     for (;;) {
         if (pdTRUE == xSemaphoreTake(xSemaphore, 0)) {
             if (4 == uxQueueMessagesWaiting(xQueue)) {
@@ -107,9 +107,9 @@ int main() {
     enableInterrupts();
 
     xTaskCreate(task_updateDisplay, NULL, configMINIMAL_STACK_SIZE, NULL,
-            tskIDLE_PRIORITY + 1, NULL);
+                tskIDLE_PRIORITY + 1, NULL);
     xTaskCreate(task_updateRtc, NULL, configMINIMAL_STACK_SIZE, NULL,
-            tskIDLE_PRIORITY + 1, NULL);
+                tskIDLE_PRIORITY + 1, NULL);
 
     vTaskStartScheduler();
 

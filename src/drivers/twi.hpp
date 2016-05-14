@@ -1,5 +1,5 @@
-#ifndef TWI_H_
-#define TWI_H_
+#ifndef TWI_HPP_
+#define TWI_HPP_
 
 #include <stdint.h>
 
