@@ -26,12 +26,13 @@ MAPFILE    = $(OUTDIR)/$(NAME).map
 INCLUDES += src
 INCLUDES += src/drivers
 INCLUDES += src/modules
-INCLUDES += src/freertos/include
-INCLUDES += src/freertos/portable/GCC/ATMega328P
-
 SOURCES += $(wildcard src/*.cpp)
 SOURCES += $(wildcard src/drivers/*.cpp)
 SOURCES += $(wildcard src/modules/*.cpp)
+
+# FreeRTOS
+INCLUDES += src/freertos/include
+INCLUDES += src/freertos/portable/GCC/ATMega328P
 SOURCES += $(wildcard src/freertos/*.c)
 SOURCES += src/freertos/portable/GCC/ATMega328P/port.c
 SOURCES += src/freertos/portable/MemMang/heap_3.c
@@ -40,7 +41,6 @@ SOURCES += src/freertos/portable/MemMang/heap_3.c
 
 SYMBOLS += BAUD=9600
 SYMBOLS += F_CPU=16000000
-SYMBOLS += F_SCL=400000
 
 # ----- Flags ------------------------------------------------------------------
 
@@ -66,7 +66,7 @@ OBJECTS = $(addprefix $(OBJDIR)/,$(addsuffix .o,$(basename $(SOURCES))))
 all: $(EXECUTABLE)
 	@echo # New line for better reading
 	$(SIZE) $^
-	@echo
+	@echo # Another new line for even better reading
 
 clean:
 	$(RMDIR) $(OUTDIR)
@@ -74,6 +74,11 @@ clean:
 
 download: $(EXECUTABLE)
 	avrdude -p atmega328p -c avrispmkII -U flash:w:$<
+
+$(EXECUTABLE): $(OBJECTS)
+	$(MKDIR) $(dir $@)
+	$(GCC) $(GCCFLAGS) $(LDFLAGS) $^ -o $@
+	@echo $@
 
 $(OBJDIR)/%.o: %.c
 	$(MKDIR) $(dir $@)
@@ -83,9 +88,4 @@ $(OBJDIR)/%.o: %.c
 $(OBJDIR)/%.o: %.cpp
 	$(MKDIR) $(dir $@)
 	$(GCC) $(GCCFLAGS) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
-	@echo $@
-
-$(EXECUTABLE): $(OBJECTS)
-	$(MKDIR) $(dir $@)
-	$(GCC) $(GCCFLAGS) $(LDFLAGS) $^ -o $@
 	@echo $@
