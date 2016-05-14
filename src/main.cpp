@@ -15,9 +15,9 @@
 
 #include "uart.hpp"
 
-#include "ds1307.h"
-#include "ht16k33_segment.h"
-#include "si1145.h"
+#include "ds1307.hpp"
+#include "ht16k33_segment.hpp"
+#include "si1145.hpp"
 
 #define UART Uart::getInstance()
 #define disableInterrupts() cli()

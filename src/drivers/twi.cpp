@@ -4,7 +4,7 @@
 #include <avr/io.h>
 #include <util/twi.h>
 
-#include "util.h"
+#include "util.hpp"
 #include "twi.hpp"
 
 #ifndef F_SCL

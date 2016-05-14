@@ -5,7 +5,7 @@
 #include <avr/io.h>
 #include <util/setbaud.h>
 
-#include "util.h"
+#include "util.hpp"
 #include "uart.hpp"
 
 Uart* Uart::_instance = NULL;

@@ -4,7 +4,7 @@
 
 #include "twi.hpp"
 
-#include "ds1307.h"
+#include "ds1307.hpp"
 
 #define TWI() Twi::getInstance()
 

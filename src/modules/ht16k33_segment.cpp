@@ -3,7 +3,7 @@
 
 #include "twi.hpp"
 
-#include "ht16k33_segment.h"
+#include "ht16k33_segment.hpp"
 
 #define TWI Twi::getInstance()
 
