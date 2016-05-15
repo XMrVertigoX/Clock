@@ -1,11 +1,9 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "twi.hpp"
+#include "twi.h"
 
 #include "ht16k33_segment.hpp"
-
-#define TWI Twi::getInstance()
 
 static const uint8_t colonMask[] = {0b00000000, 0b00000010};
 
@@ -18,10 +16,10 @@ HT16K33_Segment::HT16K33_Segment(uint8_t address) {
     uint8_t initSequence[] = {0x21, 0xA0, 0xE0, 0x81};
 
     for (uint8_t i = 0; i < sizeof(initSequence); i++) {
-        TWI->startTransmission();
-        TWI->writeBytes(address, &initSequence[i], 1);
+        TWI_startTransmission();
+        TWI_writeBytes(address, &initSequence[i], 1);
     }
-    TWI->stopTransmission();
+    TWI_stopTransmission();
 }
 
 HT16K33_Segment::~HT16K33_Segment() {}
@@ -33,15 +31,15 @@ void HT16K33_Segment::setBrightness(uint8_t brightness) {
 
     brightness += 0xE0;  // Brightness register offset
 
-    TWI->startTransmission();
-    TWI->writeBytes(_address, &brightness, 1);
-    TWI->stopTransmission();
+    TWI_startTransmission();
+    TWI_writeBytes(_address, &brightness, 1);
+    TWI_stopTransmission();
 }
 
 void HT16K33_Segment::updateDigit(digit_t digit, uint8_t number) {
     uint8_t tmp[] = {digit, numberMasks[number % 10]};
 
-    TWI->startTransmission();
-    TWI->writeBytes(_address, tmp, 2);
-    TWI->stopTransmission();
+    TWI_startTransmission();
+    TWI_writeBytes(_address, tmp, 2);
+    TWI_stopTransmission();
 }

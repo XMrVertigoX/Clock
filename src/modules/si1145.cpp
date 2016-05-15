@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-#include "twi.hpp"
+#include "twi.h"
 
 #include "si1145.hpp"
 

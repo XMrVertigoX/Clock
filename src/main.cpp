@@ -10,9 +10,9 @@
 
 #include <FreeRTOS.h>
 #include <queue.h>
-#include <semphr.h>
 #include <task.h>
 
+#include "twi.h"
 #include "uart.h"
 
 #include "ds1307.hpp"
@@ -27,21 +27,19 @@
 #define rtcAddress 0x68
 #define sensorAddress 0x60
 
-HT16K33_Segment *display;
-DS1307 *rtc;
-SI1145 *sensor;
+HT16K33_Segment *display = NULL;
+DS1307 *rtc = NULL;
+SI1145 *sensor = NULL;
 
-SemaphoreHandle_t xSemaphore;
 QueueHandle_t uartRxQueue;
 
-static void enableUsartRxInterrupt() {
+static void enableUartRxInterrupt() {
     UCSR0B |= (1 << RXCIE0);
 }
 
 ISR(USART_RX_vect) {
     uint8_t byte = UART_Rx(NULL);
-    xQueueSendFromISR(uartRxQueue, &byte, 0);
-    xSemaphoreGiveFromISR(xSemaphore, NULL);
+    xQueueSendToBackFromISR(uartRxQueue, &byte, 0);
 }
 
 void task_updateDisplay(void *pvParameters) {
@@ -66,31 +64,30 @@ void task_updateDisplay(void *pvParameters) {
 
 void task_updateRtc(void *pvParameters) {
     for (;;) {
-        if (pdTRUE == xSemaphoreTake(xSemaphore, 0)) {
-            if (4 == uxQueueMessagesWaiting(uartRxQueue)) {
-                union {
-                    uint8_t a[4];
-                    time_t b;
-                } timestamp;
+        if (4 == uxQueueMessagesWaiting(uartRxQueue)) {
+            union {
+                uint8_t a[4];
+                time_t b;
+            } timestamp;
 
-                for (uint8_t i = 0; i < sizeof(time_t); i++) {
-                    xQueueReceive(uartRxQueue, &timestamp.a[i], 0);
-                }
-
-                rtc->write(timestamp.b - UNIX_OFFSET);
+            for (uint8_t i = 0; i < sizeof(time_t); i++) {
+                xQueueReceive(uartRxQueue, &timestamp.a[i], 0);
             }
+
+            rtc->write(timestamp.b - UNIX_OFFSET);
         }
     }
 }
 
 int main() {
+    TWI_init();
     UART_Init();
+
     FILE *stream = fdevopen(UART_Tx, UART_Rx);
     stderr = stream;
     stdin = stream;
     stdout = stream;
 
-    xSemaphore = xSemaphoreCreateBinary();
     uartRxQueue = xQueueCreate(4, 1);
 
     display = new HT16K33_Segment(displayAddress);
@@ -100,13 +97,14 @@ int main() {
     set_dst(eu_dst);
     set_zone(1 * ONE_HOUR);
 
-    enableUsartRxInterrupt();
-    enableInterrupts();
+    enableUartRxInterrupt();
 
     xTaskCreate(task_updateDisplay, NULL, configMINIMAL_STACK_SIZE, NULL,
                 tskIDLE_PRIORITY + 1, NULL);
     xTaskCreate(task_updateRtc, NULL, configMINIMAL_STACK_SIZE, NULL,
                 tskIDLE_PRIORITY + 1, NULL);
+
+    enableInterrupts();
 
     vTaskStartScheduler();
 

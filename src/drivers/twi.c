@@ -4,14 +4,13 @@
 #include <avr/io.h>
 #include <util/twi.h>
 
-#include "util.hpp"
-#include "twi.hpp"
+#include "twi.h"
+
+#define waitUntil(x) while (!(x))
 
 #ifndef F_SCL
 #define F_SCL 400000
 #endif
-
-Twi* Twi::_instance = NULL;
 
 static inline uint8_t calculateBitRate() {
     return (((F_CPU / F_SCL) - 16) / 2);
@@ -73,23 +72,11 @@ static uint8_t sendNACK() {
     return TW_STATUS;
 }
 
-Twi::Twi() {
+void TWI_init(void) {
     setBitRate();
 }
 
-Twi::~Twi() {
-    delete _instance;
-}
-
-Twi* Twi::getInstance() {
-    if (!_instance) {
-        _instance = new Twi;
-    }
-
-    return _instance;
-}
-
-uint8_t Twi::startTransmission() {
+uint8_t TWI_startTransmission(void) {
     uint8_t status = sendStartCondition();
 
     if (status == TW_START || status == TW_REP_START) {
@@ -99,11 +86,11 @@ uint8_t Twi::startTransmission() {
     }
 }
 
-void Twi::stopTransmission() {
+void TWI_stopTransmission(void) {
     sendStopCondition();
 }
 
-uint8_t Twi::readBytes(uint8_t address, uint8_t* bytes, uint32_t numBytes) {
+uint8_t TWI_readBytes(uint8_t address, uint8_t* bytes, uint32_t numBytes) {
     uint8_t status = sendAddress(address, TW_READ);
 
     if (status != TW_MR_SLA_ACK) {
@@ -127,7 +114,7 @@ uint8_t Twi::readBytes(uint8_t address, uint8_t* bytes, uint32_t numBytes) {
     return 0;
 }
 
-uint8_t Twi::writeBytes(uint8_t address, uint8_t* bytes, uint32_t numBytes) {
+uint8_t TWI_writeBytes(uint8_t address, uint8_t* bytes, uint32_t numBytes) {
     uint8_t status = sendAddress(address, TW_WRITE);
 
     if (status != TW_MT_SLA_ACK) {

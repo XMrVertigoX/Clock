@@ -1,9 +1,7 @@
-#ifndef HT16K33_DISPLAY_H_
-#define HT16K33_DISPLAY_H_
+#ifndef HT16K33_DISPLAY_HPP_
+#define HT16K33_DISPLAY_HPP_
 
 #include <stdint.h>
-
-#include "twi.hpp"
 
 enum digit_t { digit0 = 0, digit1 = 2, digitColon = 4, digit2 = 6, digit3 = 8 };
 
@@ -19,4 +17,4 @@ class HT16K33_Segment {
     void updateDigit(digit_t digit, uint8_t number);
 };
 
-#endif
+#endif /* HT16K33_DISPLAY_HPP_ */

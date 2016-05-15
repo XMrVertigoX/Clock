@@ -1,9 +1,7 @@
-#ifndef DS1307_H_
-#define DS1307_H_
+#ifndef DS1307_HPP_
+#define DS1307_HPP_
 
 #include <time.h>
-
-#include "twi.hpp"
 
 class DS1307 {
    private:
@@ -17,4 +15,4 @@ class DS1307 {
     void write(time_t ntpTime);
 };
 
-#endif
+#endif /* DS1307_HPP_ */
