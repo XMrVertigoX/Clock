@@ -22,7 +22,6 @@ static inline void setBitRate() {
 }
 
 static inline void waitForInterrupt() {
-    // while (!(TWCR & (1 << TWINT))) continue;
     waitUntil(TWCR & (1 << TWINT));
 }
 
@@ -104,7 +103,7 @@ void Twi::stopTransmission() {
     sendStopCondition();
 }
 
-uint8_t Twi::readBytes(uint8_t address, uint8_t bytes[], uint32_t numBytes) {
+uint8_t Twi::readBytes(uint8_t address, uint8_t* bytes, uint32_t numBytes) {
     uint8_t status = sendAddress(address, TW_READ);
 
     if (status != TW_MR_SLA_ACK) {
@@ -128,7 +127,7 @@ uint8_t Twi::readBytes(uint8_t address, uint8_t bytes[], uint32_t numBytes) {
     return 0;
 }
 
-uint8_t Twi::writeBytes(uint8_t address, uint8_t bytes[], uint32_t numBytes) {
+uint8_t Twi::writeBytes(uint8_t address, uint8_t* bytes, uint32_t numBytes) {
     uint8_t status = sendAddress(address, TW_WRITE);
 
     if (status != TW_MT_SLA_ACK) {
