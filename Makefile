@@ -23,6 +23,10 @@ MAPFILE    = $(OUTDIR)/$(NAME).map
 
 # ----- Source files -----------------------------------------------------------
 
+# FreeRTOS
+INCLUDES += freertos
+SOURCES += $(wildcard freertos/*.c)
+
 # Project
 INCLUDES += src
 INCLUDES += src/config
@@ -32,17 +36,11 @@ SOURCES += $(wildcard src/*.cpp)
 SOURCES += $(wildcard src/drivers/*.c)
 SOURCES += $(wildcard src/modules/*.cpp)
 
-# FreeRTOS
-INCLUDES += freertos/include
-INCLUDES += freertos/portable/GCC/ATMega328P
-SOURCES += $(wildcard freertos/*.c)
-SOURCES += freertos/portable/GCC/ATMega328P/port.c
-SOURCES += freertos/portable/MemMang/heap_3.c
-
 # ----- Symbols ----------------------------------------------------------------
 
 SYMBOLS += BAUD=9600
 SYMBOLS += F_CPU=16000000
+SYMBOLS += __DELAY_BACKWARD_COMPATIBLE__
 
 # ----- Flags ------------------------------------------------------------------
 
