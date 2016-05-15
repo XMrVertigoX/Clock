@@ -5,10 +5,9 @@
 #include <avr/io.h>
 #include <util/setbaud.h>
 
-#include "util.hpp"
-#include "uart.hpp"
+#include "uart.h"
 
-Uart* Uart::_instance = NULL;
+#define waitUntil(x) while (!(x))
 
 static inline bool incomingTransmissionComplete() {
     return (UCSR0A & (1 << RXC0));
@@ -36,38 +35,21 @@ static void enableRxAndTx() {
     UCSR0B |= (1 << RXEN0) | (1 << TXEN0);
 }
 
-static int receiveByte(FILE* stream) {
+void UART_Init() {
+    setBaudRate();
+    setFrameFormat();
+    enableRxAndTx();
+}
+
+int UART_Rx(FILE* stream) {
     waitUntil(incomingTransmissionComplete());
     waitUntil(transmissionBufferReady());
     return UDR0;
 }
 
-static int sendByte(char byte, FILE* stream) {
+int UART_Tx(char byte, FILE* stream) {
     waitUntil(transmissionBufferReady());
     UDR0 = byte;
     waitUntil(outgoingTransmissionComplete());
     return 0;
-}
-
-Uart::Uart() {
-    setBaudRate();
-    setFrameFormat();
-    enableRxAndTx();
-
-    _stream = fdevopen(sendByte, receiveByte);
-}
-
-Uart::~Uart() {
-    delete _instance;
-}
-
-Uart* Uart::getInstance() {
-    if (!_instance) {
-        _instance = new Uart;
-    }
-    return _instance;
-}
-
-FILE* Uart::getStream() {
-    return _stream;
 }

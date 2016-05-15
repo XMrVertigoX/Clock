@@ -27,6 +27,7 @@ INCLUDES += src
 INCLUDES += src/drivers
 INCLUDES += src/modules
 SOURCES += $(wildcard src/*.cpp)
+SOURCES += $(wildcard src/drivers/*.c)
 SOURCES += $(wildcard src/drivers/*.cpp)
 SOURCES += $(wildcard src/modules/*.cpp)
 

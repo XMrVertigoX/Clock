@@ -13,7 +13,7 @@
 #include <semphr.h>
 #include <task.h>
 
-#include "uart.hpp"
+#include "uart.h"
 
 #include "ds1307.hpp"
 #include "ht16k33_segment.hpp"
@@ -39,8 +39,7 @@ static void enableUsartRxInterrupt() {
 }
 
 ISR(USART_RX_vect) {
-    uint8_t byte;
-    fread(&byte, 1, 1, stdin);
+    uint8_t byte = UART_Rx(NULL);
     xQueueSendFromISR(uartRxQueue, &byte, 0);
     xSemaphoreGiveFromISR(xSemaphore, NULL);
 }
@@ -85,9 +84,11 @@ void task_updateRtc(void *pvParameters) {
 }
 
 int main() {
-    stderr = UART()->getStream();
-    stdin = UART()->getStream();
-    stdout = UART()->getStream();
+    UART_Init();
+    FILE *stream = fdevopen(UART_Tx, UART_Rx);
+    stderr = stream;
+    stdin = stream;
+    stdout = stream;
 
     xSemaphore = xSemaphoreCreateBinary();
     uartRxQueue = xQueueCreate(4, 1);
