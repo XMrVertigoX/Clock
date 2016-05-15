@@ -33,11 +33,11 @@ SOURCES += $(wildcard src/drivers/*.c)
 SOURCES += $(wildcard src/modules/*.cpp)
 
 # FreeRTOS
-INCLUDES += src/freertos/include
-INCLUDES += src/freertos/portable/GCC/ATMega328P
-SOURCES += $(wildcard src/freertos/*.c)
-SOURCES += src/freertos/portable/GCC/ATMega328P/port.c
-SOURCES += src/freertos/portable/MemMang/heap_3.c
+INCLUDES += freertos/include
+INCLUDES += freertos/portable/GCC/ATMega328P
+SOURCES += $(wildcard freertos/*.c)
+SOURCES += freertos/portable/GCC/ATMega328P/port.c
+SOURCES += freertos/portable/MemMang/heap_3.c
 
 # ----- Symbols ----------------------------------------------------------------
 
