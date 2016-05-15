@@ -25,11 +25,11 @@
 
 #define displayAddress 0x70
 #define rtcAddress 0x68
-#define sensorAddress 0x60
+#define lightSensorAddress 0x60
 
-HT16K33_Segment *display = NULL;
-DS1307 *rtc = NULL;
-SI1145 *sensor = NULL;
+HT16K33_Segment *display;
+DS1307 *rtc;
+SI1145 *lightSensor;
 
 QueueHandle_t uartRxQueue;
 
@@ -92,7 +92,7 @@ int main() {
 
     display = new HT16K33_Segment(displayAddress);
     rtc = new DS1307(rtcAddress);
-    sensor = new SI1145(sensorAddress);
+    lightSensor = new SI1145(lightSensorAddress);
 
     set_dst(eu_dst);
     set_zone(1 * ONE_HOUR);

@@ -25,6 +25,7 @@ MAPFILE    = $(OUTDIR)/$(NAME).map
 
 # Project
 INCLUDES += src
+INCLUDES += src/config
 INCLUDES += src/drivers
 INCLUDES += src/modules
 SOURCES += $(wildcard src/*.cpp)
