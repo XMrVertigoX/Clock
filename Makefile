@@ -29,7 +29,6 @@ SOURCES += $(wildcard freertos/*.c)
 
 # Project
 INCLUDES += src
-INCLUDES += src/config
 INCLUDES += src/drivers
 INCLUDES += src/modules
 SOURCES += $(wildcard src/*.cpp)
@@ -57,7 +56,7 @@ LDFLAGS  += -Wl,--gc-sections
 
 # ----- Objects ----------------------------------------------------------------
 
-OBJECTS = $(addprefix $(OBJDIR)/,$(addsuffix .o,$(basename $(SOURCES))))
+OBJECTS = $(addprefix $(OBJDIR),$(abspath $(addsuffix .o,$(basename $(SOURCES)))))
 
 # ----- Rules ------------------------------------------------------------------
 
@@ -80,12 +79,12 @@ $(EXECUTABLE): $(OBJECTS)
 	$(GCC) $(GCCFLAGS) $(LDFLAGS) $^ -o $@
 	@echo $@
 
-$(OBJDIR)/%.o: %.c
+$(OBJDIR)/%.o: /%.c
 	$(MKDIR) $(dir $@)
 	$(GCC) $(GCCFLAGS) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 	@echo $@
 
-$(OBJDIR)/%.o: %.cpp
+$(OBJDIR)/%.o: /%.cpp
 	$(MKDIR) $(dir $@)
 	$(GCC) $(GCCFLAGS) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
 	@echo $@

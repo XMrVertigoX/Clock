@@ -27,11 +27,16 @@
 #define rtcAddress 0x68
 #define lightSensorAddress 0x60
 
+#define LOG(string, ...)         \
+    portENTER_CRITICAL();        \
+    printf(string, __VA_ARGS__); \
+    portEXIT_CRITICAL();
+
 HT16K33_Segment *display;
 DS1307 *rtc;
 SI1145 *lightSensor;
 
-QueueHandle_t uartRxQueue;
+QueueHandle_t usartRxQueue;
 
 static void enableUartRxInterrupt() {
     UCSR0B |= (1 << RXCIE0);
@@ -39,7 +44,7 @@ static void enableUartRxInterrupt() {
 
 ISR(USART_RX_vect) {
     uint8_t byte = UART_Rx(NULL);
-    xQueueSendToBackFromISR(uartRxQueue, &byte, 0);
+    xQueueSendToBackFromISR(usartRxQueue, &byte, 0);
 }
 
 void task_updateDisplay(void *pvParameters) {
@@ -58,20 +63,20 @@ void task_updateDisplay(void *pvParameters) {
         display->updateDigit(digit2, tm_rtc->tm_min / 10);
         display->updateDigit(digit3, tm_rtc->tm_min % 10);
 
-        printf("%s\r\n", asctime(tm_rtc));
+        LOG("%s\r\n", asctime(tm_rtc));
     }
 }
 
 void task_updateRtc(void *pvParameters) {
     for (;;) {
-        if (4 == uxQueueMessagesWaiting(uartRxQueue)) {
+        if (0 == uxQueueSpacesAvailable(usartRxQueue)) {
             union {
                 uint8_t a[4];
                 time_t b;
             } timestamp;
 
             for (uint8_t i = 0; i < sizeof(time_t); i++) {
-                xQueueReceive(uartRxQueue, &timestamp.a[i], 0);
+                xQueueReceive(usartRxQueue, &timestamp.a[i], 0);
             }
 
             rtc->write(timestamp.b - UNIX_OFFSET);
@@ -80,15 +85,15 @@ void task_updateRtc(void *pvParameters) {
 }
 
 int main() {
-    TWI_init();
     UART_Init();
+    TWI_init();
 
     FILE *stream = fdevopen(UART_Tx, UART_Rx);
     stderr = stream;
     stdin = stream;
     stdout = stream;
 
-    uartRxQueue = xQueueCreate(4, 1);
+    usartRxQueue = xQueueCreate(4, sizeof(uint8_t));
 
     display = new HT16K33_Segment(displayAddress);
     rtc = new DS1307(rtcAddress);
