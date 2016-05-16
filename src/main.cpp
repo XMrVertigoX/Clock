@@ -27,11 +27,6 @@
 #define rtcAddress 0x68
 #define lightSensorAddress 0x60
 
-#define LOG(string, ...)         \
-    portENTER_CRITICAL();        \
-    printf(string, __VA_ARGS__); \
-    portEXIT_CRITICAL();
-
 HT16K33_Segment *display;
 DS1307 *rtc;
 SI1145 *lightSensor;
@@ -62,8 +57,6 @@ void task_updateDisplay(void *pvParameters) {
         display->updateDigit(digit1, tm_rtc->tm_hour % 10);
         display->updateDigit(digit2, tm_rtc->tm_min / 10);
         display->updateDigit(digit3, tm_rtc->tm_min % 10);
-
-        LOG("%s\r\n", asctime(tm_rtc));
     }
 }
 
