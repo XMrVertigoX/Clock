@@ -1,3 +1,5 @@
+PROJECT_NAME = clock
+
 # ----- Toolchain --------------------------------------------------------------
 
 TOOLCHAIN_PREFIX = avr-
@@ -13,13 +15,11 @@ RMDIR = rm -rf
 
 # ----- Directories and files --------------------------------------------------
 
-NAME = firmware
-
 OBJDIR = _obj
 OUTDIR = _out
 
-EXECUTABLE = $(OUTDIR)/$(NAME).elf
-MAPFILE    = $(OUTDIR)/$(NAME).map
+EXECUTABLE = $(OUTDIR)/$(PROJECT_NAME).elf
+MAPFILE    = $(OUTDIR)/$(PROJECT_NAME).map
 
 # ----- Source files -----------------------------------------------------------
 
@@ -56,7 +56,10 @@ LDFLAGS  += -Wl,--gc-sections
 
 # ----- Objects ----------------------------------------------------------------
 
-OBJECTS = $(addprefix $(OBJDIR),$(abspath $(addsuffix .o,$(basename $(SOURCES)))))
+SOURCE_FILES = $(sort $(realpath $(SOURCES)))
+OBJECT_FILES = $(addsuffix .o,$(basename $(SOURCE_FILES)))
+
+OBJECTS = $(addprefix $(OBJDIR),$(OBJECT_FILES))
 
 # ----- Rules ------------------------------------------------------------------
 
@@ -72,19 +75,16 @@ clean:
 	$(RMDIR) $(OBJDIR)
 
 download: $(EXECUTABLE)
-	avrdude -p atmega328p -c avrispmkII -U flash:w:$<
+	avrdude -patmega328p -cavrispmkII -Uflash:w:$<
 
 $(EXECUTABLE): $(OBJECTS)
 	$(MKDIR) $(dir $@)
 	$(GCC) $(GCCFLAGS) $(LDFLAGS) $^ -o $@
-	@echo $@
 
 $(OBJDIR)/%.o: /%.c
 	$(MKDIR) $(dir $@)
 	$(GCC) $(GCCFLAGS) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
-	@echo $@
 
 $(OBJDIR)/%.o: /%.cpp
 	$(MKDIR) $(dir $@)
 	$(GCC) $(GCCFLAGS) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
-	@echo $@

@@ -97,10 +97,8 @@ int main() {
 
     enableUartRxInterrupt();
 
-    xTaskCreate(task_updateDisplay, NULL, configMINIMAL_STACK_SIZE, NULL,
-                tskIDLE_PRIORITY + 1, NULL);
-    xTaskCreate(task_updateRtc, NULL, configMINIMAL_STACK_SIZE, NULL,
-                tskIDLE_PRIORITY + 1, NULL);
+    xTaskCreate(task_updateDisplay, NULL, 128, NULL, 1, NULL);
+    xTaskCreate(task_updateRtc, NULL, 128, NULL, 1, NULL);
 
     enableInterrupts();
 
