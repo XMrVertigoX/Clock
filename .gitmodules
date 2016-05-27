@@ -1,0 +1,3 @@
+[submodule "avrfreertos"]
+	path = avrfreertos
+	url = https://github.com/feilipu/avrfreertos.git
