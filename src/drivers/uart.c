@@ -1,11 +1,11 @@
+#include "uart.h"
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 
 #include <avr/io.h>
 #include <util/setbaud.h>
-
-#include "uart.h"
 
 #define waitUntil(x) while (!(x))
 

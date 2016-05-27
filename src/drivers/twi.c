@@ -1,10 +1,10 @@
+#include "twi.h"
+
 #include <stdint.h>
 #include <stdio.h>
 
 #include <avr/io.h>
 #include <util/twi.h>
-
-#include "twi.h"
 
 #define waitUntil(x) while (!(x))
 

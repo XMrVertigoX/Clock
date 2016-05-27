@@ -9,7 +9,7 @@ class SI1145 {
 
    public:
     SI1145(uint8_t address);
-    virtual ~SI1145();
+    ~SI1145();
 };
 
 #endif

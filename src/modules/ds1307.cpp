@@ -1,10 +1,10 @@
+#include "ds1307.hpp"
+
 #include <stdint.h>
 #include <stdio.h>
 #include <time.h>
 
 #include "twi.h"
-
-#include "ds1307.hpp"
 
 static inline uint8_t decode(uint8_t num) {
     return (num - 6 * (num >> 4));
@@ -14,9 +14,7 @@ static inline uint8_t encode(uint8_t num) {
     return (num + 6 * (num / 10));
 }
 
-DS1307::DS1307(uint8_t address) {
-    _address = address;
-}
+DS1307::DS1307(uint8_t address) : _address(address) {}
 
 DS1307::~DS1307() {}
 

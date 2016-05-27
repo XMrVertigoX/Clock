@@ -24,20 +24,20 @@ MAPFILE    = $(OUTDIR)/$(PROJECT_NAME).map
 # ----- Source files -----------------------------------------------------------
 
 # FreeRTOS
-INCLUDES += freertos
-SOURCES += $(wildcard freertos/*.c)
+INCLUDES_DIRS += freertos
+SOURCE_FILES += $(wildcard freertos/*.c)
 
 # Project
-INCLUDES += src
-INCLUDES += src/drivers
-INCLUDES += src/modules
-SOURCES += $(wildcard src/*.cpp)
-SOURCES += $(wildcard src/drivers/*.c)
-SOURCES += $(wildcard src/modules/*.cpp)
+INCLUDES_DIRS += src
+INCLUDES_DIRS += src/drivers
+INCLUDES_DIRS += src/modules
+SOURCE_FILES += $(wildcard src/*.cpp)
+SOURCE_FILES += $(wildcard src/drivers/*.c)
+SOURCE_FILES += $(wildcard src/modules/*.cpp)
 
 # ----- Symbols ----------------------------------------------------------------
 
-SYMBOLS += BAUD=9600
+SYMBOLS += BAUD=57600
 SYMBOLS += F_CPU=16000000
 SYMBOLS += __DELAY_BACKWARD_COMPATIBLE__
 
@@ -46,20 +46,22 @@ SYMBOLS += __DELAY_BACKWARD_COMPATIBLE__
 GCCFLAGS += -mmcu=atmega328p
 
 CPPFLAGS += $(addprefix -D,$(SYMBOLS))
-CPPFLAGS += $(addprefix -I,$(INCLUDES))
+CPPFLAGS += $(addprefix -I,$(INCLUDES_DIRS))
 
-CFLAGS   += -O3 -ffunction-sections -fdata-sections -fno-exceptions -fno-builtin -fno-common -fomit-frame-pointer
-CXXFLAGS += -O3 -ffunction-sections -fdata-sections -fno-exceptions -fno-builtin -fno-common -fomit-frame-pointer
+COMMON_COMPILER_FLAGS = -O3 -ffunction-sections -fdata-sections -fno-exceptions -nostdlib
+
+CFLAGS += $(COMMON_COMPILER_FLAGS)
+
+CXXFLAGS += $(COMMON_COMPILER_FLAGS)
+CXXFLAGS += -fno-rtti
 
 LDFLAGS  += -Wl,-Map=$(MAPFILE)
 LDFLAGS  += -Wl,--gc-sections
 
 # ----- Objects ----------------------------------------------------------------
 
-SOURCE_FILES = $(sort $(realpath $(SOURCES)))
-OBJECT_FILES = $(addsuffix .o,$(basename $(SOURCE_FILES)))
-
-OBJECTS = $(addprefix $(OBJDIR),$(OBJECT_FILES))
+SORTED_SOURCE_FILES = $(sort $(realpath $(SOURCE_FILES)))
+SORTED_OBJECT_FILES =  $(addprefix $(OBJDIR),$(addsuffix .o,$(basename $(SORTED_SOURCE_FILES))))
 
 # ----- Rules ------------------------------------------------------------------
 
@@ -77,7 +79,7 @@ clean:
 download: $(EXECUTABLE)
 	avrdude -patmega328p -cavrispmkII -Uflash:w:$<
 
-$(EXECUTABLE): $(OBJECTS)
+$(EXECUTABLE): $(SORTED_OBJECT_FILES)
 	$(MKDIR) $(dir $@)
 	$(GCC) $(GCCFLAGS) $(LDFLAGS) $^ -o $@
 
