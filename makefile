@@ -18,6 +18,7 @@ RMDIR = rm -rf
 OBJDIR = _obj
 OUTDIR = _out
 
+BINARY     = $(OUTDIR)/$(PROJECT_NAME).bin
 EXECUTABLE = $(OUTDIR)/$(PROJECT_NAME).elf
 MAPFILE    = $(OUTDIR)/$(PROJECT_NAME).map
 
@@ -40,7 +41,6 @@ SOURCE_FILES += $(wildcard src/support/*.cpp)
 
 SYMBOLS += BAUD=57600
 SYMBOLS += F_CPU=16000000
-SYMBOLS += __DELAY_BACKWARD_COMPATIBLE__
 
 # ----- Flags -----------------------------------------------------------------
 
@@ -49,11 +49,10 @@ GCCFLAGS += -mmcu=atmega328p
 CPPFLAGS += $(addprefix -D,$(SYMBOLS))
 CPPFLAGS += $(addprefix -I,$(INCLUDES_DIRS))
 
-COMMON_COMPILER_FLAGS = -O3 -ffunction-sections -fdata-sections -fno-exceptions -fno-unwind-tables -nostdlib
+COMMON_CFLAGS = -O3 -ffunction-sections -fdata-sections -fno-exceptions -fno-unwind-tables -nostdlib
 
-CFLAGS += $(COMMON_COMPILER_FLAGS)
+CFLAGS +=
 
-CXXFLAGS += $(COMMON_COMPILER_FLAGS)
 CXXFLAGS += -fno-rtti
 CXXFLAGS += -fno-threadsafe-statics
 
@@ -68,8 +67,6 @@ SORTED_OBJECT_FILES =  $(addprefix $(OBJDIR),$(addsuffix .o,$(basename $(SORTED_
 # ----- Rules -----------------------------------------------------------------
 
 .PHONY: all clean download
-
-.SILENT:
 
 all: $(EXECUTABLE)
 	@echo # New line for better reading
@@ -91,9 +88,9 @@ $(EXECUTABLE): $(SORTED_OBJECT_FILES)
 $(OBJDIR)/%.o: /%.c
 	@$(MKDIR) $(dir $@)
 	@echo [ CMP ] $(notdir $@)
-	@$(GCC) $(GCCFLAGS) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+	@$(GCC) $(GCCFLAGS) $(COMMON_CFLAGS) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 $(OBJDIR)/%.o: /%.cpp
 	@$(MKDIR) $(dir $@)
 	@echo [ CMP ] $(notdir $@)
-	@$(GCC) $(GCCFLAGS) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
+	@$(GCC) $(GCCFLAGS) $(COMMON_CFLAGS) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
