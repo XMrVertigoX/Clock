@@ -13,6 +13,7 @@ class HT16K33_Segment {
     HT16K33_Segment(uint8_t address);
     ~HT16K33_Segment();
 
+    void init();
     void setBrightness(uint8_t brightness);
     void updateDigit(digit_t digit, uint8_t number);
 };

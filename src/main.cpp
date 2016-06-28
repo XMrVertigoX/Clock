@@ -21,15 +21,14 @@
 
 #define disableInterrupts() cli()
 #define enableInterrupts() sei()
-#define UART() Uart::getInstance()
 
 #define displayAddress 0x70
 #define rtcAddress 0x68
 #define lightSensorAddress 0x60
 
-HT16K33_Segment *display;
-DS1307 *rtc;
-SI1145 *lightSensor;
+HT16K33_Segment display(displayAddress);
+DS1307 rtc(rtcAddress);
+SI1145 lightSensor(lightSensorAddress);
 
 QueueHandle_t usartRxQueue;
 
@@ -45,18 +44,18 @@ ISR(USART_RX_vect) {
 void task_updateDisplay(void *pvParameters) {
     TickType_t xLastWakeTime = xTaskGetTickCount();
 
-    display->setBrightness(0xF);
+    display.setBrightness(0xF);
 
     for (;;) {
         vTaskDelayUntil(&xLastWakeTime, 1000 / portTICK_PERIOD_MS);
 
-        time_t time_gm = rtc->read();
+        time_t time_gm = rtc.read();
         struct tm *tm_rtc = localtime(&time_gm);
 
-        display->updateDigit(digit0, tm_rtc->tm_hour / 10);
-        display->updateDigit(digit1, tm_rtc->tm_hour % 10);
-        display->updateDigit(digit2, tm_rtc->tm_min / 10);
-        display->updateDigit(digit3, tm_rtc->tm_min % 10);
+        display.updateDigit(digit0, tm_rtc->tm_hour / 10);
+        display.updateDigit(digit1, tm_rtc->tm_hour % 10);
+        display.updateDigit(digit2, tm_rtc->tm_min / 10);
+        display.updateDigit(digit3, tm_rtc->tm_min % 10);
     }
 }
 
@@ -72,7 +71,7 @@ void task_updateRtc(void *pvParameters) {
                 xQueueReceive(usartRxQueue, &timestamp.a[i], 0);
             }
 
-            rtc->write(timestamp.b - UNIX_OFFSET);
+            rtc.write(timestamp.b - UNIX_OFFSET);
         }
     }
 }
@@ -86,11 +85,9 @@ int main() {
     stdin = stream;
     stdout = stream;
 
-    usartRxQueue = xQueueCreate(4, sizeof(uint8_t));
+    display.init();
 
-    display = new HT16K33_Segment(displayAddress);
-    rtc = new DS1307(rtcAddress);
-    lightSensor = new SI1145(lightSensorAddress);
+    usartRxQueue = xQueueCreate(4, sizeof(uint8_t));
 
     set_dst(eu_dst);
     set_zone(1 * ONE_HOUR);
