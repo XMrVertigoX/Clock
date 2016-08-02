@@ -11,17 +11,19 @@ static const uint8_t numberMasks[] = {
     0b00111111, 0b00000110, 0b01011011, 0b01001111, 0b01100110,
     0b01101101, 0b01111101, 0b00000111, 0b01111111, 0b01101111};
 
-HT16K33_Segment::HT16K33_Segment(uint8_t address) : _address(address) {
+HT16K33_Segment::HT16K33_Segment(uint8_t address) : _address(address) {}
+
+HT16K33_Segment::~HT16K33_Segment() {}
+
+void HT16K33_Segment::init() {
     uint8_t initSequence[] = {0x21, 0xA0, 0xE0, 0x81};
 
     for (uint8_t i = 0; i < sizeof(initSequence); i++) {
         TWI_startTransmission();
-        TWI_writeBytes(address, &initSequence[i], 1);
+        TWI_writeBytes(_address, &initSequence[i], 1);
     }
     TWI_stopTransmission();
 }
-
-HT16K33_Segment::~HT16K33_Segment() {}
 
 void HT16K33_Segment::setBrightness(uint8_t brightness) {
     if (brightness > 0xF) {
