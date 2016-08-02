@@ -18,6 +18,7 @@ RMDIR = rm -rf
 OBJDIR = _obj
 OUTDIR = _out
 
+BINARY     = $(OUTDIR)/$(PROJECT_NAME).bin
 EXECUTABLE = $(OUTDIR)/$(PROJECT_NAME).elf
 MAPFILE    = $(OUTDIR)/$(PROJECT_NAME).map
 
@@ -48,12 +49,12 @@ GCCFLAGS += -mmcu=atmega328p
 CPPFLAGS += $(addprefix -D,$(SYMBOLS))
 CPPFLAGS += $(addprefix -I,$(INCLUDES_DIRS))
 
-COMMON_COMPILER_FLAGS = -O3 -ffunction-sections -fdata-sections -fno-exceptions -nostdlib
+COMMON_CFLAGS = -O3 -g3 -nostdlib -ffunction-sections -fdata-sections -fno-exceptions -fno-unwind-tables
 
-CFLAGS += $(COMMON_COMPILER_FLAGS)
+CFLAGS += 
 
-CXXFLAGS += $(COMMON_COMPILER_FLAGS)
 CXXFLAGS += -fno-rtti
+CXXFLAGS += -fno-threadsafe-statics
 
 LDFLAGS  += -Wl,-Map=$(MAPFILE)
 LDFLAGS  += -Wl,--gc-sections
@@ -67,26 +68,26 @@ SORTED_OBJECT_FILES =  $(addprefix $(OBJDIR),$(addsuffix .o,$(basename $(SORTED_
 
 .PHONY: all clean download
 
-all: $(EXECUTABLE)
+all: $(EXECUTABLE) $(BINARY)
 	@echo # New line for better reading
-	$(SIZE) $^
+	@$(SIZE) $<
 	@echo # Another new line for even better reading
 
 clean:
-	$(RMDIR) $(OUTDIR)
-	$(RMDIR) $(OBJDIR)
+	@echo [ RMD ] $(OUTDIR) & $(RMDIR) $(OBJDIR)
+	@echo [ RMD ] $(OUTDIR) & $(RMDIR) $(OUTDIR)
 
 download: $(EXECUTABLE)
-	avrdude -patmega328p -cavrispmkII -Uflash:w:$<
-
-$(EXECUTABLE): $(SORTED_OBJECT_FILES)
-	$(MKDIR) $(dir $@)
-	$(GCC) $(GCCFLAGS) $(LDFLAGS) $^ -o $@
+	@avrdude -q -patmega328p -cavrispmkII -Uflash:w:$<
 
 $(OBJDIR)/%.o: /%.c
-	$(MKDIR) $(dir $@)
-	$(GCC) $(GCCFLAGS) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+	@echo [ CMP ] $(notdir $@) & $(MKDIR) $(dir $@) & $(GCC) $(GCCFLAGS) $(COMMON_CFLAGS) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 $(OBJDIR)/%.o: /%.cpp
-	$(MKDIR) $(dir $@)
-	$(GCC) $(GCCFLAGS) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
+	@echo [ CMP ] $(notdir $@) & $(MKDIR) $(dir $@) & $(GCC) $(GCCFLAGS) $(COMMON_CFLAGS) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
+
+$(EXECUTABLE): $(SORTED_OBJECT_FILES)
+	@echo [ LNK ] $(notdir $@) & $(MKDIR) $(dir $@) & $(GCC) $(GCCFLAGS) $(LDFLAGS) $^ -o $@
+
+$(BINARY): $(EXECUTABLE)
+	@echo [ CPY ] $(notdir $@) & $(MKDIR) $(dir $@) & $(OBJCOPY) -O binary $< $@

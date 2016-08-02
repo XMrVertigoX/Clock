@@ -33,9 +33,7 @@ SI1145 *lightSensor;
 
 QueueHandle_t usartRxQueue;
 
-static void enableUartRxInterrupt() {
-    UCSR0B |= (1 << RXCIE0);
-}
+static void enableUartRxInterrupt() { UCSR0B |= (1 << RXCIE0); }
 
 ISR(USART_RX_vect) {
     uint8_t byte = UART_Rx(NULL);
