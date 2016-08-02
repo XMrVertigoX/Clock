@@ -32,15 +32,15 @@ SOURCE_FILES += $(wildcard freertos/*.c)
 INCLUDES_DIRS += src
 INCLUDES_DIRS += src/drivers
 INCLUDES_DIRS += src/modules
-SOURCE_FILES += $(wildcard src/*.cpp)
-SOURCE_FILES += $(wildcard src/drivers/*.c)
-SOURCE_FILES += $(wildcard src/modules/*.cpp)
+
+SOURCE_FILES += $(shell find ./src -type f -name *.c)
+SOURCE_FILES += $(shell find ./src -type f -name *.cpp)
 
 # ----- Symbols ----------------------------------------------------------------
 
 SYMBOLS += BAUD=57600
 SYMBOLS += F_CPU=16000000
-SYMBOLS += __DELAY_BACKWARD_COMPATIBLE__
+# SYMBOLS += __DELAY_BACKWARD_COMPATIBLE__
 
 # ----- Flags ------------------------------------------------------------------
 
