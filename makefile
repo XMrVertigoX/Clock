@@ -40,7 +40,6 @@ SOURCE_FILES += $(shell find ./src -type f -name *.cpp)
 
 SYMBOLS += BAUD=57600
 SYMBOLS += F_CPU=16000000
-# SYMBOLS += __DELAY_BACKWARD_COMPATIBLE__
 
 # ----- Flags ------------------------------------------------------------------
 
@@ -49,7 +48,7 @@ GCCFLAGS += -mmcu=atmega328p
 CPPFLAGS += $(addprefix -D,$(SYMBOLS))
 CPPFLAGS += $(addprefix -I,$(INCLUDES_DIRS))
 
-COMMON_CFLAGS = -O3 -g3 -nostdlib -ffunction-sections -fdata-sections -fno-exceptions -fno-unwind-tables
+COMMON_CFLAGS = -Og -g3 -nostdlib -ffunction-sections -fdata-sections -fno-exceptions -fno-unwind-tables
 
 CFLAGS += 
 
