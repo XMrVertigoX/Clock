@@ -1,3 +1,6 @@
 [submodule "freertos"]
 	path = freertos
 	url = https://github.com/feilipu/miniAVRfreeRTOS.git
+[submodule "libs/xXx"]
+	path = libs/xXx
+	url = https://github.com/XMrVertigoX/xXx_CPP.git
