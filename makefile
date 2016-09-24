@@ -8,6 +8,14 @@ SYMBOLS += __DELAY_BACKWARD_COMPATIBLE__
 
 # ----- Source files ----------------------------------------------------------
 
+# Libraries
+INCLUDE_DIRS += libs
+
+# xXx
+SOURCE_FILES += libs/xXx/support/cppsupport.cpp
+SOURCE_FILES += libs/xXx/support/operators.cpp
+SOURCE_FILES += libs/xXx/utils/arduinotask.cpp
+
 # FreeRTOS
 INCLUDE_DIRS += freertos
 SOURCE_FILES += $(wildcard freertos/*.c)
