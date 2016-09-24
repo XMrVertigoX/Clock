@@ -22,19 +22,26 @@ SOURCE_FILES += $(shell find ./src -type f -name *.cpp)
 
 # ----- Flags -----------------------------------------------------------------
 
-GCCFLAGS += -mmcu=atmega328p
+GCCFLAGS      += -mmcu=atmega328p
 
-CPPFLAGS += $(addprefix -D,$(SYMBOLS))
-CPPFLAGS += $(addprefix -I,$(INCLUDE_DIRS))
+COMMON_CFLAGS += -fdata-sections
+COMMON_CFLAGS += -ffunction-sections
+COMMON_CFLAGS += -fno-builtin
+COMMON_CFLAGS += -fno-exceptions
+COMMON_CFLAGS += -fno-unwind-tables
+COMMON_CFLAGS += -g
+COMMON_CFLAGS += -nostdlib
+COMMON_CFLAGS += -Og
 
-COMMON_CFLAGS = -Og -g -nostdlib -ffunction-sections -fdata-sections -fno-exceptions -fno-unwind-tables -fno-builtin
+CFLAGS        +=
 
-CFLAGS +=
+CXXFLAGS      += -fno-rtti
+CXXFLAGS      += -fno-threadsafe-statics
 
-CXXFLAGS += -fno-rtti
-CXXFLAGS += -fno-threadsafe-statics
+CPPFLAGS      += $(addprefix -D,$(SYMBOLS))
+CPPFLAGS      += $(addprefix -I,$(INCLUDE_DIRS))
 
-LDFLAGS  += -Wl,--gc-sections
+LDFLAGS       += -Wl,--gc-sections
 
 # ----- Rules -----------------------------------------------------------------
 
@@ -42,5 +49,5 @@ TOOLCHAIN_PREFIX = avr-
 
 include libs/xXx/utils/rules.mk
 
-flash: $(EXECUTABLE)
+download: $(EXECUTABLE)
 	@avrdude -q -patmega328p -cavrispmkII -Uflash:w:$<
