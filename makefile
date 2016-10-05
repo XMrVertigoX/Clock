@@ -2,9 +2,10 @@ PROJECT_NAME = clock
 
 # ----- Symbols ---------------------------------------------------------------
 
+SYMBOLS += __DELAY_BACKWARD_COMPATIBLE__
 SYMBOLS += BAUD=57600
 SYMBOLS += F_CPU=16000000
-SYMBOLS += __DELAY_BACKWARD_COMPATIBLE__
+SYMBOLS += NDEBUG
 
 # ----- Source files ----------------------------------------------------------
 
