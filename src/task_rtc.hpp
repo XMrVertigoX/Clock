@@ -1,16 +1,23 @@
-#include <xXx/templates/singleton.hpp>
-#include <xXx/utils/arduinotask.hpp>
+#include <time.h>
+
+#include <FreeRTOS.h>
+#include <queue.h>
+#include <task.h>
+
+#include <xXx/os/arduinotask.hpp>
+
+#include "ds1307.hpp"
 
 using namespace xXx;
 
-class Task_RTC : public ArduinoTask, public Singleton<Task_RTC> {
-    friend class Singleton<Task_RTC>;
-
-   public:
+class Task_RTC : public ArduinoTask {
+  public:
+    Task_RTC(DS1307 &rtc, QueueHandle_t &queue);
+    ~Task_RTC();
     void setup();
     void loop();
 
-   private:
-    Task_RTC() = default;
-    ~Task_RTC() = default;
+  private:
+    QueueHandle_t &_queue;
+    DS1307 &_rtc;
 };
