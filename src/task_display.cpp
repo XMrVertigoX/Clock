@@ -6,6 +6,9 @@
 
 #include <xXx/os/arduinotask.hpp>
 
+#include "ds1307.hpp"
+#include "ht16k33_segment.hpp"
+
 #include "task_display.hpp"
 
 using namespace xXx;
@@ -17,6 +20,7 @@ Task_Display::~Task_Display() {}
 
 void Task_Display::setup() {
     _lastWakeTime = xTaskGetTickCount();
+    _display.init();
     _display.setBrightness(0xF);
 }
 

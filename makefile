@@ -15,7 +15,7 @@ INCLUDE_DIRS += libs
 # xXx
 SOURCE_FILES += libs/xXx/support/cppsupport.cpp
 SOURCE_FILES += libs/xXx/support/operators.cpp
-SOURCE_FILES += libs/xXx/utils/arduinotask.cpp
+SOURCE_FILES += libs/xXx/os/arduinotask.cpp
 
 # FreeRTOS
 INCLUDE_DIRS += freertos
