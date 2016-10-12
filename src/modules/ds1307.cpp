@@ -29,19 +29,19 @@ time_t DS1307::read() {
     TWI_readBytes(_address, timeRegisters, sizeof(timeRegisters));
     TWI_stopTransmission();
 
-    tm_rtc.tm_sec = decode(timeRegisters[0]);
-    tm_rtc.tm_min = decode(timeRegisters[1]);
+    tm_rtc.tm_sec  = decode(timeRegisters[0]);
+    tm_rtc.tm_min  = decode(timeRegisters[1]);
     tm_rtc.tm_hour = decode(timeRegisters[2]);
-    tm_rtc.tm_wday = decode(timeRegisters[3]) - 1;  // tm_wday is 0-6
+    tm_rtc.tm_wday = decode(timeRegisters[3]) - 1; // tm_wday is 0-6
     tm_rtc.tm_mday = decode(timeRegisters[4]);
-    tm_rtc.tm_mon = decode(timeRegisters[5]) - 1;  // tm_mon is 0-11
+    tm_rtc.tm_mon  = decode(timeRegisters[5]) - 1; // tm_mon is 0-11
     tm_rtc.tm_year = decode(timeRegisters[6]);
 
     return mk_gmtime(&tm_rtc);
 }
 
 void DS1307::write(time_t ntpTime) {
-    struct tm* tm_ntp = gmtime(&ntpTime);
+    struct tm *tm_ntp          = gmtime(&ntpTime);
     uint8_t timeRegistersStart = 0x00;
 
     // rtc_wday is 1-7, rtc_mon is 1-12

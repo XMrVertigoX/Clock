@@ -10,8 +10,8 @@ extern "C" {
 void TWI_init(void);
 uint8_t TWI_startTransmission(void);
 void TWI_stopTransmission(void);
-uint8_t TWI_readBytes(uint8_t address, uint8_t* bytes, uint32_t numBytes);
-uint8_t TWI_writeBytes(uint8_t address, uint8_t* bytes, uint32_t numBytes);
+uint8_t TWI_readBytes(uint8_t address, uint8_t *bytes, uint32_t numBytes);
+uint8_t TWI_writeBytes(uint8_t address, uint8_t *bytes, uint32_t numBytes);
 
 #ifdef __cplusplus
 }

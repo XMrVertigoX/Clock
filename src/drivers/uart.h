@@ -9,8 +9,8 @@ extern "C" {
 #endif
 
 void UART_Init();
-int UART_Rx(FILE* stream);
-int UART_Tx(char byte, FILE* stream);
+int UART_Rx(FILE *stream);
+int UART_Tx(char byte, FILE *stream);
 
 #ifdef __cplusplus
 }
