@@ -11,6 +11,7 @@ SYMBOLS += NDEBUG
 
 # Libraries
 INCLUDE_DIRS += libs
+INCLUDE_DIRS += libs/FreeRTOS
 
 # xXx
 SOURCE_FILES += libs/xXx/support/cppsupport.cpp
@@ -18,8 +19,7 @@ SOURCE_FILES += libs/xXx/support/operators.cpp
 SOURCE_FILES += libs/xXx/os/arduinotask.cpp
 
 # FreeRTOS
-INCLUDE_DIRS += freertos
-SOURCE_FILES += $(wildcard freertos/*.c)
+SOURCE_FILES += $(wildcard libs/FreeRTOS/*.c)
 
 # Project
 INCLUDE_DIRS += src
