@@ -2,8 +2,13 @@
 Language: Cpp
 
 AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: false
 AllowShortBlocksOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: true
 AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: true
+AllowShortLoopsOnASingleLine: true
+IndentCaseLabels: true
 IndentWidth: 4
 ReflowComments: false
 SortIncludes: true
