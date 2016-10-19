@@ -1,5 +1,8 @@
 PROJECT_NAME = clock
 
+# ISP = -cavrispmkII
+ISP = -carduino -P/dev/ttyACM0
+
 # ----- Symbols ---------------------------------------------------------------
 
 SYMBOLS += __DELAY_BACKWARD_COMPATIBLE__
@@ -59,4 +62,4 @@ TOOLCHAIN_PREFIX = avr-
 include libs/xXx/utils/rules.mk
 
 download: $(EXECUTABLE)
-	@avrdude -q -patmega328p -cavrispmkII -Uflash:w:$<
+	avrdude $(ISP) -q -patmega328p -Uflash:w:$<
