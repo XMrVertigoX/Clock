@@ -2,7 +2,7 @@
 Language: Cpp
 
 AlignConsecutiveAssignments: true
-AlignConsecutiveDeclarations: false
+# AlignConsecutiveDeclarations: true
 AllowShortBlocksOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: true
 AllowShortFunctionsOnASingleLine: Empty
