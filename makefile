@@ -17,9 +17,7 @@ INCLUDE_DIRS += libs
 INCLUDE_DIRS += libs/FreeRTOS
 
 # xXx
-SOURCE_FILES += libs/xXx/support/cppsupport.cpp
-SOURCE_FILES += libs/xXx/support/operators.cpp
-SOURCE_FILES += libs/xXx/os/arduinotask.cpp
+SOURCE_FILES += $(wildcard libs/xXx/*/*.cpp)
 
 # FreeRTOS
 SOURCE_FILES += $(wildcard libs/FreeRTOS/*.c)
@@ -36,17 +34,7 @@ SOURCE_FILES += $(shell find ./src -type f -name *.cpp)
 
 GCCFLAGS += -mmcu=atmega328p
 
-# COMMON_CFLAGS += -g
 COMMON_CFLAGS += -O3
-
-# CFLAGS +=
-
-# CXXFLAGS +=
-
-# CPPFLAG +=
-# CPPFLAGS +=
-
-# LDFLAGS +=
 
 # ----- Rules -----------------------------------------------------------------
 
