@@ -1,7 +1,7 @@
 PROJECT_NAME = clock
 
-# ISP = -cavrispmkII
-ISP = -carduino -P/dev/ttyACM0
+# ISP = -c avrispmkII
+ISP = -c arduino -P /dev/ttyACM0
 
 # ----- Symbols ---------------------------------------------------------------
 
@@ -34,26 +34,19 @@ SOURCE_FILES += $(shell find ./src -type f -name *.cpp)
 
 # ----- Flags -----------------------------------------------------------------
 
-GCCFLAGS      += -mmcu=atmega328p
+GCCFLAGS += -mmcu=atmega328p
 
-COMMON_CFLAGS += -fdata-sections
-COMMON_CFLAGS += -ffunction-sections
-COMMON_CFLAGS += -fno-builtin
-COMMON_CFLAGS += -fno-exceptions
-COMMON_CFLAGS += -fno-unwind-tables
-COMMON_CFLAGS += -g
-COMMON_CFLAGS += -nostdlib
-COMMON_CFLAGS += -Og
+# COMMON_CFLAGS += -g
+COMMON_CFLAGS += -O3
 
-CFLAGS        +=
+# CFLAGS +=
 
-CXXFLAGS      += -fno-rtti
-CXXFLAGS      += -fno-threadsafe-statics
+# CXXFLAGS +=
 
-CPPFLAGS      += $(addprefix -D,$(SYMBOLS))
-CPPFLAGS      += $(addprefix -I,$(INCLUDE_DIRS))
+# CPPFLAG +=
+# CPPFLAGS +=
 
-LDFLAGS       += -Wl,--gc-sections
+# LDFLAGS +=
 
 # ----- Rules -----------------------------------------------------------------
 
@@ -62,4 +55,4 @@ TOOLCHAIN_PREFIX = avr-
 include libs/xXx/utils/rules.mk
 
 download: $(EXECUTABLE)
-	avrdude $(ISP) -q -patmega328p -Uflash:w:$<
+	avrdude $(ISP) -q -p atmega328p -U flash:w:$<
