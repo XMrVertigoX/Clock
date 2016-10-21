@@ -4,10 +4,10 @@
 #include <time.h>
 
 class DS1307 {
-   private:
+  private:
     uint8_t _address;
 
-   public:
+  public:
     DS1307(uint8_t address);
     ~DS1307();
 

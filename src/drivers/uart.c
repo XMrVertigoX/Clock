@@ -41,13 +41,13 @@ void UART_Init() {
     enableRxAndTx();
 }
 
-int UART_Rx(FILE* stream) {
+int UART_Rx(FILE *stream) {
     waitUntil(incomingTransmissionComplete());
     waitUntil(transmissionBufferReady());
     return UDR0;
 }
 
-int UART_Tx(char byte, FILE* stream) {
+int UART_Tx(char byte, FILE *stream) {
     waitUntil(transmissionBufferReady());
     UDR0 = byte;
     waitUntil(outgoingTransmissionComplete());

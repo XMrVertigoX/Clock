@@ -6,10 +6,10 @@
 enum digit_t { digit0 = 0, digit1 = 2, digitColon = 4, digit2 = 6, digit3 = 8 };
 
 class HT16K33_Segment {
-   private:
+  private:
     uint8_t _address;
 
-   public:
+  public:
     HT16K33_Segment(uint8_t address);
     ~HT16K33_Segment();
 

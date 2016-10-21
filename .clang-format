@@ -1,12 +1,15 @@
 ---
-BasedOnStyle: Google
-IndentWidth: 4
----
 Language: Cpp
 
+AlignConsecutiveAssignments: true
+# AlignConsecutiveDeclarations: true
 AllowShortBlocksOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: true
 AllowShortFunctionsOnASingleLine: Empty
-
+AllowShortIfStatementsOnASingleLine: true
+AllowShortLoopsOnASingleLine: true
+IndentCaseLabels: true
+IndentWidth: 4
 ReflowComments: false
 SortIncludes: true
 ---

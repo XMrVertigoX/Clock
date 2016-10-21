@@ -30,7 +30,7 @@ void HT16K33_Segment::setBrightness(uint8_t brightness) {
         brightness = 0xF;
     }
 
-    brightness += 0xE0;  // Brightness register offset
+    brightness += 0xE0; // Brightness register offset
 
     TWI_startTransmission();
     TWI_writeBytes(_address, &brightness, 1);

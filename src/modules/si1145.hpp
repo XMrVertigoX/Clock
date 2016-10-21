@@ -4,10 +4,10 @@
 #include <stdint.h>
 
 class SI1145 {
-   private:
+  private:
     uint8_t _address;
 
-   public:
+  public:
     SI1145(uint8_t address);
     ~SI1145();
 };

@@ -90,7 +90,7 @@ void TWI_stopTransmission(void) {
     sendStopCondition();
 }
 
-uint8_t TWI_readBytes(uint8_t address, uint8_t* bytes, uint32_t numBytes) {
+uint8_t TWI_readBytes(uint8_t address, uint8_t *bytes, uint32_t numBytes) {
     uint8_t status = sendAddress(address, TW_READ);
 
     if (status != TW_MR_SLA_ACK) {
@@ -114,7 +114,7 @@ uint8_t TWI_readBytes(uint8_t address, uint8_t* bytes, uint32_t numBytes) {
     return 0;
 }
 
-uint8_t TWI_writeBytes(uint8_t address, uint8_t* bytes, uint32_t numBytes) {
+uint8_t TWI_writeBytes(uint8_t address, uint8_t *bytes, uint32_t numBytes) {
     uint8_t status = sendAddress(address, TW_WRITE);
 
     if (status != TW_MT_SLA_ACK) {
