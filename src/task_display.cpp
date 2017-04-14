@@ -4,7 +4,7 @@
 #include <queue.h>
 #include <task.h>
 
-#include <xXx/os/arduinotask.hpp>
+#include <xXx/os/simpletask.hpp>
 
 #include "ds1307.hpp"
 #include "ht16k33_segment.hpp"
@@ -14,7 +14,7 @@
 using namespace xXx;
 
 Task_Display::Task_Display(HT16K33_Segment &display, DS1307 &rtc)
-    : ArduinoTask(128, 1), _display(display), _rtc(rtc) {}
+    : _display(display), _rtc(rtc) {}
 
 Task_Display::~Task_Display() {}
 

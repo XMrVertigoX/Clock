@@ -4,7 +4,7 @@
 #include <queue.h>
 #include <task.h>
 
-#include <xXx/os/arduinotask.hpp>
+#include <xXx/os/simpletask.hpp>
 
 #include "ds1307.hpp"
 
@@ -13,7 +13,7 @@
 using namespace xXx;
 
 Task_RTC::Task_RTC(DS1307 &rtc, QueueHandle_t &queue)
-    : ArduinoTask(128, 1), _queue(queue), _rtc(rtc) {}
+    : _queue(queue), _rtc(rtc) {}
 
 Task_RTC::~Task_RTC() {}
 

@@ -19,9 +19,9 @@
 #define disableInterrupts() cli()
 #define enableInterrupts() sei()
 
-#define displayAddress 0x70
-#define rtcAddress 0x68
-#define lightSensorAddress 0x60
+static const uint8_t displayAddress     = 0x70;
+static const uint8_t rtcAddress         = 0x68;
+static const uint8_t lightSensorAddress = 0x60;
 
 HT16K33_Segment display(displayAddress);
 DS1307 rtc(rtcAddress);
