@@ -1,5 +1,3 @@
-#include "uart.h"
-
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -7,7 +5,11 @@
 #include <avr/io.h>
 #include <util/setbaud.h>
 
-#define waitUntil(x) while (!(x))
+#include "uart.hpp"
+
+#define WAIT_UNTIL(x) while (!(x))
+
+static FILE *__stream;
 
 static inline bool incomingTransmissionComplete() {
     return (UCSR0A & (1 << RXC0));
@@ -35,21 +37,30 @@ static void enableRxAndTx() {
     UCSR0B |= (1 << RXEN0) | (1 << TXEN0);
 }
 
-void UART_Init() {
+void Uart::init() {
     setBaudRate();
     setFrameFormat();
     enableRxAndTx();
 }
 
-int UART_Rx(FILE *stream) {
-    waitUntil(incomingTransmissionComplete());
-    waitUntil(transmissionBufferReady());
-    return UDR0;
+int Uart::UART_Rx(FILE *stream) {
+    WAIT_UNTIL(incomingTransmissionComplete());
+    WAIT_UNTIL(transmissionBufferReady());
+
+    return (UDR0);
 }
 
-int UART_Tx(char byte, FILE *stream) {
-    waitUntil(transmissionBufferReady());
+int Uart::UART_Tx(char byte, FILE *stream) {
+    WAIT_UNTIL(transmissionBufferReady());
     UDR0 = byte;
-    waitUntil(outgoingTransmissionComplete());
-    return 0;
+    WAIT_UNTIL(outgoingTransmissionComplete());
+
+    return (0);
+}
+
+void Uart::enableIOStreams() {
+    __stream = fdevopen(UART_Tx, UART_Rx);
+    stderr   = __stream;
+    stdin    = __stream;
+    stdout   = __stream;
 }

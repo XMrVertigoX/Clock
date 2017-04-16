@@ -1,14 +1,17 @@
 ---
 Language: Cpp
 
+BasedOnStyle: Google
+
 AlignConsecutiveAssignments: true
-# AlignConsecutiveDeclarations: true
 AllowShortBlocksOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: true
 AllowShortFunctionsOnASingleLine: Empty
 AllowShortIfStatementsOnASingleLine: true
 AllowShortLoopsOnASingleLine: true
-IndentCaseLabels: true
+AlwaysBreakTemplateDeclarations: true
+ColumnLimit: 100
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
 IndentWidth: 4
 ReflowComments: false
 SortIncludes: true

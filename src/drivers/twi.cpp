@@ -1,10 +1,10 @@
-#include "twi.h"
-
 #include <stdint.h>
 #include <stdio.h>
 
 #include <avr/io.h>
 #include <util/twi.h>
+
+#include "twi.hpp"
 
 #define waitUntil(x) while (!(x))
 
@@ -72,11 +72,11 @@ static uint8_t sendNACK() {
     return TW_STATUS;
 }
 
-void TWI_init(void) {
+void Twi::init(void) {
     setBitRate();
 }
 
-uint8_t TWI_startTransmission(void) {
+uint8_t Twi::startTransmission(void) {
     uint8_t status = sendStartCondition();
 
     if (status == TW_START || status == TW_REP_START) {
@@ -86,11 +86,11 @@ uint8_t TWI_startTransmission(void) {
     }
 }
 
-void TWI_stopTransmission(void) {
+void Twi::stopTransmission(void) {
     sendStopCondition();
 }
 
-uint8_t TWI_readBytes(uint8_t address, uint8_t *bytes, uint32_t numBytes) {
+uint8_t Twi::readBytes(uint8_t address, uint8_t *bytes, uint32_t numBytes) {
     uint8_t status = sendAddress(address, TW_READ);
 
     if (status != TW_MR_SLA_ACK) {
@@ -114,7 +114,7 @@ uint8_t TWI_readBytes(uint8_t address, uint8_t *bytes, uint32_t numBytes) {
     return 0;
 }
 
-uint8_t TWI_writeBytes(uint8_t address, uint8_t *bytes, uint32_t numBytes) {
+uint8_t Twi::writeBytes(uint8_t address, uint8_t *bytes, uint32_t numBytes) {
     uint8_t status = sendAddress(address, TW_WRITE);
 
     if (status != TW_MT_SLA_ACK) {

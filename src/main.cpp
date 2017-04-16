@@ -6,57 +6,60 @@
 #include <queue.h>
 #include <task.h>
 
-#include "twi.h"
-#include "uart.h"
+#include <xXx/templates/queue.hpp>
+#include <xXx/utils/logging.hpp>
 
-#include "ds1307.hpp"
-#include "ht16k33_segment.hpp"
-#include "si1145.hpp"
-
+#include "drivers/twi.hpp"
+#include "drivers/uart.hpp"
+#include "modules/ds1307.hpp"
+#include "modules/ht16k33_segment.hpp"
+#include "modules/si1145.hpp"
 #include "task_display.hpp"
 #include "task_rtc.hpp"
 
 #define disableInterrupts() cli()
 #define enableInterrupts() sei()
 
-static const uint8_t displayAddress     = 0x70;
-static const uint8_t rtcAddress         = 0x68;
-static const uint8_t lightSensorAddress = 0x60;
+const uint8_t displayAddress     = 0x70;
+const uint8_t rtcAddress         = 0x68;
+const uint8_t lightSensorAddress = 0x60;
 
-HT16K33_Segment display(displayAddress);
-DS1307 rtc(rtcAddress);
-SI1145 lightSensor(lightSensorAddress);
+Uart uart;
+Twi twi;
 
-QueueHandle_t usartRxQueue;
+HT16K33_Segment display(twi, displayAddress);
+DS1307 rtc(twi, rtcAddress);
+SI1145 lightSensor(twi, lightSensorAddress);
+
+Queue<uint8_t> rxQueue(4);
 
 Task_Display task_display(display, rtc);
-Task_RTC task_rtc(rtc, usartRxQueue);
+Task_RTC task_rtc(rtc, rxQueue);
 
-static void enableUartRxInterrupt() {
+void enableUartRxInterrupt() {
     UCSR0B |= (1 << RXCIE0);
 }
 
 ISR(USART_RX_vect) {
-    uint8_t byte = UART_Rx(NULL);
-    xQueueSendToBackFromISR(usartRxQueue, &byte, 0);
+    uint8_t byte = uart.UART_Rx(NULL);
+    rxQueue.enqueueFromISR(byte);
 }
 
 int main() {
-    UART_Init();
-    TWI_init();
-
-    FILE *stream = fdevopen(UART_Tx, UART_Rx);
-    stderr       = stream;
-    stdin        = stream;
-    stdout       = stream;
-
-    usartRxQueue = xQueueCreate(4, sizeof(uint8_t));
+    twi.init();
+    uart.init();
+    uart.enableIOStreams();
 
     set_dst(eu_dst);
     set_zone(1 * ONE_HOUR);
 
     enableUartRxInterrupt();
     enableInterrupts();
+
+    task_display.taskCreate();
+    task_rtc.taskCreate();
+
+    LOG("Enter scheduler");
 
     vTaskStartScheduler();
 }
