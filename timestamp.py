@@ -1,6 +1,5 @@
 #! /bin/python
 
-import math
 import serial
 import time
 

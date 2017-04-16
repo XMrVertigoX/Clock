@@ -1,14 +1,12 @@
 PROJECT_NAME = clock
 
 ISP = -c avrispmkII
-# ISP = -c arduino -P /dev/ttyACM0
 
 # ----- Symbols ---------------------------------------------------------------
 
 SYMBOLS += __DELAY_BACKWARD_COMPATIBLE__
 SYMBOLS += BAUD=9600
 SYMBOLS += F_CPU=16000000
-# SYMBOLS += NDEBUG
 
 # ----- Source files ----------------------------------------------------------
 
@@ -25,8 +23,7 @@ SOURCE_FILES += $(wildcard libs/xXx/utils/*.cpp)
 SOURCE_FILES += $(wildcard libs/FreeRTOS/*.c)
 
 # Project
-SOURCE_FILES += $(shell find ./src -type f -name *.c)
-SOURCE_FILES += $(shell find ./src -type f -name *.cpp)
+SOURCE_FILES += $(shell find ./src -iregex ".*\.\(c\|cpp\)")
 
 # ----- Flags -----------------------------------------------------------------
 
