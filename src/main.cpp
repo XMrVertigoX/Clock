@@ -56,8 +56,8 @@ int main() {
     enableUartRxInterrupt();
     enableInterrupts();
 
-    task_display.taskCreate();
-    task_rtc.taskCreate();
+    task_display.create();
+    task_rtc.create();
 
     LOG("Enter scheduler");
 
