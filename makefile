@@ -31,6 +31,10 @@ GCCFLAGS += -mmcu=atmega328p
 
 COMMON_CFLAGS += -O3
 
+CFLAGS += -std=gnu11
+
+CXXFLAGS += -std=gnu++14
+
 # ----- Rules -----------------------------------------------------------------
 
 TOOLCHAIN_PREFIX = avr-
