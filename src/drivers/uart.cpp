@@ -44,6 +44,8 @@ void Uart::init() {
 }
 
 int Uart::UART_Rx(FILE *stream) {
+    (void)stream;
+
     WAIT_UNTIL(incomingTransmissionComplete());
     WAIT_UNTIL(transmissionBufferReady());
 
@@ -51,6 +53,8 @@ int Uart::UART_Rx(FILE *stream) {
 }
 
 int Uart::UART_Tx(char byte, FILE *stream) {
+    (void)stream;
+
     WAIT_UNTIL(transmissionBufferReady());
     UDR0 = byte;
     WAIT_UNTIL(outgoingTransmissionComplete());

@@ -37,7 +37,7 @@ time_t DS1307::read() {
     tm_rtc.tm_mon  = decode(timeRegisters[5]) - 1;  // tm_mon is 0-11
     tm_rtc.tm_year = decode(timeRegisters[6]);
 
-    return mk_gmtime(&tm_rtc);
+    return (mk_gmtime(&tm_rtc));
 }
 
 void DS1307::write(time_t ntpTime) {

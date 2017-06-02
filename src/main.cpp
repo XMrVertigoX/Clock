@@ -20,9 +20,9 @@
 #define disableInterrupts() cli()
 #define enableInterrupts() sei()
 
-const uint8_t displayAddress     = 0x70;
-const uint8_t rtcAddress         = 0x68;
-const uint8_t lightSensorAddress = 0x60;
+static const uint8_t displayAddress     = 0x70;
+static const uint8_t rtcAddress         = 0x68;
+static const uint8_t lightSensorAddress = 0x60;
 
 Uart uart;
 Twi twi;
