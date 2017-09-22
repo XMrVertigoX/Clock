@@ -41,5 +41,5 @@ TOOLCHAIN_PREFIX = avr-
 
 include libs/xXx/utils/rules.mk
 
-download: $(EXECUTABLE)
+download: foo.hex
 	avrdude $(ISP) -q -p atmega328p -U flash:w:$<

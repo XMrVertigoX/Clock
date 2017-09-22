@@ -17,7 +17,7 @@
 #include "task_display.hpp"
 #include "task_rtc.hpp"
 
-#define disableInterrupts() cli()
+// #define disableInterrupts() cli()
 #define enableInterrupts() sei()
 
 static const uint8_t displayAddress     = 0x70;
